@@ -1664,6 +1664,8 @@
     if (homeLink) {
       homeLink.addEventListener('click', e => {
         e.preventDefault();
+        // Returning to the landing page: leave the Envoys dark mode behind.
+        setDarkMode(false);
         const c = document.getElementById('curtain');
         if (!c) return;
         c.style.display = 'flex';
