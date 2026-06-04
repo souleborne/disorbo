@@ -58,6 +58,11 @@
       overflow-y: auto;
     }
 
+    /* Brand-row wrapper is transparent on desktop (display:contents) so the
+       wordmark + mark lay out in the sidebar column unchanged. Mobile overrides
+       it to a flex row. */
+    .brand-row { display: contents; }
+
     .wordmark {
       font-family: 'Newsreader', serif;
       font-weight: 500;
@@ -942,49 +947,159 @@
     }
 
     @media (max-width: 767px) {
-      .shell { grid-template-columns: 1fr; }
+      /* minmax(0,1fr) instead of 1fr so the content column can shrink below
+         its min-content width. Without the 0 minimum, wide image grids and
+         embeds on the Rospo/Envoys subpages blew the column (and the whole
+         layout viewport) out past the device width, forcing lateral scroll. */
+      /* Block layout on mobile (instead of the desktop grid): the sidebar and
+         content become normal block siblings so a sticky header can travel the
+         full body scroll, and a block-level .content can't be expanded past the
+         viewport by its contents (kills the lateral-scroll blowout too). */
+      .shell { display: block; }
+
+      /* ---- Top menu: sticky brand row + collapsing category nav ---- */
       .sidebar {
-        position: static;
+        position: sticky;
+        top: 0;
+        z-index: 50;
         height: auto;
         flex-direction: column;
+        align-items: center;
         border-right: none;
         border-bottom: 1px solid var(--rule);
-        padding: 28px 22px 22px;
-        gap: 18px;
+        background: var(--bg);
+        padding: 12px 22px;
+        gap: 10px;
+        transition: gap 0.3s ease, padding 0.3s ease;
       }
-      .mark { height: 110px; align-self: center; }
-      .wordmark { text-align: center; font-size: 20px; }
-      .nav { flex-direction: row; flex-wrap: wrap; gap: 12px 22px; justify-content: center; }
+      /* Brand row: wordmark (left) + sprite (right), on one line. */
+      .brand-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+      }
+      .wordmark { text-align: left; font-size: 20px; }
+      /* Sprite shrunk to roughly the height of the two-line wordmark. */
+      .mark { height: 46px; width: auto; margin: 0; align-self: center; }
+
+      /* The three categories on their own row. Collapses to zero height when
+         the header is condensed (scrolling down) and animates back on scroll-up. */
+      .nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px 22px;
+        justify-content: center;
+        overflow: hidden;
+        max-height: 60px;
+        opacity: 1;
+        transition: max-height 0.32s ease, opacity 0.24s ease, margin 0.32s ease;
+      }
       .nav-group { gap: 2px; align-items: center; }
       .nav-cat { align-self: auto; }
-      /* Mobile horizontal nav: keep the active grow restrained so it doesn't
-         push the row out of alignment, but the slide-right + em-dash
-         animation on project links is restored to match desktop. */
       .nav-cat.is-active { font-size: 15px; }
       .nav-cat[data-view]:hover { font-size: 14px; letter-spacing: 0.035em; }
-      .nav-sub { flex-direction: row; flex-wrap: wrap; gap: 4px 12px; justify-content: center; }
-      .nav-sub li a { font-size: 12px; }
-      .side-foot {
-        border-top: 1px dashed var(--rule);
-        padding-top: 16px; margin-top: 4px;
-        align-items: center;
-        text-align: center;
+      /* Film subsections are hidden on mobile — film subpages are reached from
+         the Film page tiles, not the top menu. */
+      .nav-sub { display: none; }
+
+      /* Condensed state (added by JS when scrolling down): only the brand row
+         remains; About / Film / Writing fold away. */
+      .sidebar.is-condensed { gap: 0; }
+      .sidebar.is-condensed .nav {
+        max-height: 0;
+        opacity: 0;
+        margin: 0;
+        pointer-events: none;
       }
-      .content { padding: 28px 18px 64px; }
+
+      /* ---- Bottom letterbox: contact + older work, anchored constantly ---- */
+      .side-foot {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 60;
+        flex-direction: row-reverse;   /* contact (1st child) → right, older work → left */
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin: 0;
+        padding: 11px 22px;
+        background: var(--bg);
+        border-top: 1px solid var(--rule);
+        text-align: left;
+      }
+      .side-foot .contact-wrap { position: relative; }
+      /* The email reveal pops up ABOVE the bar rather than pushing it down.
+         left:auto + width:max-content so it sizes to the email and anchors its
+         right edge to the contact button (instead of stretching to its width). */
+      .side-foot .contact-reveal {
+        position: absolute;
+        right: 0;
+        left: auto;
+        bottom: calc(100% + 8px);
+        width: max-content;
+        max-width: 78vw;
+      }
+      .side-foot .contact-wrap.is-open .contact-reveal { margin-top: 0; }
+      .side-foot .contact-reveal-inner {
+        background: var(--bg);
+        border: 1px solid var(--rule);
+        padding: 6px 10px;
+        white-space: nowrap;
+      }
+
+      /* Extra bottom padding so content clears the fixed letterbox. */
+      .content { padding: 28px 18px 92px; }
       .grid { gap: 18px; }
-      /* 4:1 tiles are short on narrow screens — vertically center the title
-         and tuck the marker bottom-right so they don't collide */
-      .tile-text {
-        left: 18px; right: 18px;
+
+      /* Shared: text spans the tile with an 18px inset by default. */
+      .tile-text { left: 18px; right: 18px; }
+
+      /* Film tiles (4:1 video tiles): title + meta pinned to the lower-left. */
+      .tile-has-media .tile-text {
+        top: auto; bottom: 14px;
+        transform: none;
+      }
+
+      /* Press & award tiles: text flush-left, vertically centered, and sized to
+         fit inside the tile (no overflow past the top/bottom edges). These are
+         .tile-half too, so they must opt out of the Writing-tile indent below. */
+      .tile-press, .tile-award { min-height: 112px; }
+      .tile-press .tile-text,
+      .tile-award .tile-text {
+        left: 18px;
         top: 50%; bottom: auto;
         transform: translateY(-50%);
       }
-      /* Writing-tile drawings shrink on mobile; text shifts right by the
-         smaller slot width + small gap (12px + 56px + 14px ≈ 82px). */
+      .tile-press .tile-text { right: 18px; }
+      .tile-award .tile-text { right: 88px; }   /* room for the laurel at right */
+      .tile-press .tile-quote { font-size: 13.5px; line-height: 1.3; }
+
+      /* Writing tiles: title + meta vertically centered together; each stays on
+         a single line (no wrapping), with the font shrunk so it fits. */
       .tile-drawing { width: 56px; height: 42px; left: 12px; }
-      .tile-half .tile-text { left: 82px; }
+      .tile-half:not(.tile-press):not(.tile-award) .tile-text {
+        left: 82px; right: 12px;
+        top: 50%; bottom: auto;
+        transform: translateY(-50%);
+      }
+      .tile-half:not(.tile-press):not(.tile-award) .tile-title {
+        white-space: nowrap;
+        font-size: 15px;
+        line-height: 1.15;
+        margin-bottom: 1px;
+      }
+      .tile-half:not(.tile-press):not(.tile-award) .tile-meta {
+        white-space: nowrap;
+        font-size: 11px;
+      }
+
+      /* Film-tile type sizes + marker. The meta <p> carries a default 1em
+         margin; zero it so text hugs (tight lower-left on film tiles, and
+         title/subtitle sit right next to each other on Writing tiles). */
       .tile-title { font-size: 17px; letter-spacing: 0.01em; line-height: 1.1; }
-      .tile-meta { font-size: 11px; }
+      .tile-meta { font-size: 11px; margin: 0; }
       .tile-marker {
         top: auto; left: auto;
         bottom: 8px; right: 12px;
@@ -1119,16 +1234,21 @@
 
     <aside class="sidebar" aria-label="Global navigation">
 
-      <div class="wordmark">
-        <a href="#about" data-view="about" aria-label="Joe(y) Disorbo — home">
-          <span class="given">Joe(y)</span>
-          <span class="sur">Disorbo</span>
-        </a>
-      </div>
+      <!-- Brand row. On desktop this wrapper is display:contents (transparent),
+           so the wordmark + mark lay out in the sidebar column exactly as before.
+           On mobile it becomes a flex row: wordmark left, sprite right. -->
+      <div class="brand-row">
+        <div class="wordmark">
+          <a href="#about" data-view="about" aria-label="Joe(y) Disorbo — home">
+            <span class="given">Joe(y)</span>
+            <span class="sur">Disorbo</span>
+          </a>
+        </div>
 
-      <img class="mark" src="assets/drawings/logo_main_cut.png"
-           alt="Drawing of the figure's head — large, angular, pitched forward, in nervous continuous line. Site logo mark."
-           width="248" height="231">
+        <img class="mark" src="assets/drawings/logo_main_cut.png"
+             alt="Drawing of the figure's head — large, angular, pitched forward, in nervous continuous line. Site logo mark."
+             width="248" height="231">
+      </div>
 
       <nav class="nav" aria-label="Primary">
 
@@ -1763,6 +1883,36 @@
       document.addEventListener('keydown', e => {
         if (e.key === 'Escape') setOpen(false);
       });
+    })();
+
+    // Mobile only: collapse the top menu (About / Film / Writing) when the user
+    // scrolls down, restore it when scrolling up. The brand row stays put.
+    (function () {
+      const sidebar = document.querySelector('.sidebar');
+      if (!sidebar) return;
+      const mq = window.matchMedia('(max-width: 767px)');
+      const THRESHOLD = 8;   // ignore tiny jitters
+      const TOP_ZONE = 40;   // always expanded near the very top
+      let lastY = window.scrollY;
+      let ticking = false;
+      function update() {
+        ticking = false;
+        if (!mq.matches) { sidebar.classList.remove('is-condensed'); lastY = window.scrollY; return; }
+        const y = window.scrollY;
+        if (y <= TOP_ZONE) {
+          sidebar.classList.remove('is-condensed');
+        } else if (y > lastY + THRESHOLD) {
+          sidebar.classList.add('is-condensed');     // scrolling down → collapse
+        } else if (y < lastY - THRESHOLD) {
+          sidebar.classList.remove('is-condensed');  // scrolling up → reveal
+        }
+        lastY = y;
+      }
+      window.addEventListener('scroll', () => {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }, { passive: true });
+      // Reset when crossing the mobile/desktop boundary.
+      mq.addEventListener('change', () => sidebar.classList.remove('is-condensed'));
     })();
 
     // Curtain — the landing overlay. Clicking the name lifts it and enters
