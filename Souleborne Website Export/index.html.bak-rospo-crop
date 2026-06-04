@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Joe(y) Disorbo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+  <style>
+    /* ---------- Tokens ---------- */
+    :root {
+      --bg: #fafaf7;            /* warm white field */
+      --bg-tile: #f1ede5;       /* tile cream */
+      --bg-tile-hover: #ece7dc;
+      --ink: #1a1816;           /* warm near-black */
+      --ink-soft: #3a342d;
+      --ink-muted: #807769;
+      --ink-faint: #b3a999;
+      --rule: #e5e1da;
+      --accent: #6b3a1e;        /* used almost nowhere — reserved */
+      --sidebar-w: 280px;
+      --content-max: 980px;
+      --gutter: 24px;
+    }
+
+    /* ---------- Reset ---------- */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+    body {
+      font-family: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; background: none; border: 0; padding: 0; color: inherit; cursor: pointer; }
+
+    /* ---------- Layout shell ---------- */
+    .shell {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      min-height: 100vh;
+    }
+
+    /* ---------- Sidebar ---------- */
+    .sidebar {
+      border-right: 1px solid var(--rule);
+      padding: 24px 32px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .wordmark {
+      font-family: 'Newsreader', serif;
+      font-weight: 500;
+      font-variation-settings: "opsz" 60;
+      font-size: 22px;
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+    .wordmark a { display: block; }
+    .wordmark .given,
+    .wordmark .sur { display: block; font-weight: 500; }
+
+    /* the figure — sidebar version. Wakes when the cursor enters the sidebar. */
+    .mark {
+      align-self: flex-start;
+      margin: 0 0 2px;
+      width: auto;
+      height: 75px;
+      opacity: 0.92;
+      mix-blend-mode: multiply;  /* lets the warm field tint show through */
+      filter: contrast(1.05);
+      transform-origin: 50% 95%;
+      transition: filter 600ms ease, opacity 600ms ease;
+    }
+    .sidebar:hover .mark {
+      opacity: 1;
+      filter: contrast(1.08);
+    }
+
+    /* primary nav */
+    .nav { display: flex; flex-direction: column; gap: 18px; margin-top: 4px; }
+    .nav-group { display: flex; flex-direction: column; gap: 6px; }
+
+    /* Category buttons — letter-spacing breath + font-size grow on hover,
+       larger persistent grow when active. */
+    .nav-cat {
+      font-family: 'Newsreader', serif;
+      font-weight: 500;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      padding: 2px 0;
+      align-self: flex-start;
+      position: relative;
+      transform-origin: left center;
+      transition: color 220ms ease,
+                  letter-spacing 360ms cubic-bezier(0.16, 1, 0.3, 1),
+                  font-size 360ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .nav-cat[data-view]:hover {
+      color: var(--ink-soft);
+      letter-spacing: 0.045em;
+      font-size: 16px;
+    }
+    .nav-cat.is-active {
+      color: var(--ink);
+      font-size: 18px;
+    }
+    .nav-cat.is-active:hover { font-size: 18px; }  /* don't shrink when re-hovered while active */
+
+    .nav-sub {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: flex; flex-direction: column;
+      gap: 4px;
+    }
+    .nav-sub li { position: relative; }
+    .nav-sub li a {
+      display: inline-block;
+      position: relative;
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: 12px;
+      letter-spacing: 0.01em;
+      color: var(--ink-muted);
+      padding: 1px 0;
+      transform: translateX(0);
+      transition: color 220ms ease,
+                  transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+    }
+    /* The em-dash lives as a pseudo-element to the LEFT of the link.
+       Idle: invisible and shifted further left.
+       Hover (non-active): faint ghost, settles into place.
+       Active: full ink, settles into place, link slides right to make room. */
+    .nav-sub li a::before {
+      content: "—";
+      position: absolute;
+      right: 100%;
+      top: 50%;
+      margin-right: 6px;
+      transform: translateY(-50%) translateX(-12px);
+      opacity: 0;
+      color: var(--ink-faint);
+      pointer-events: none;
+      transition: opacity 260ms ease,
+                  transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+                  color 220ms ease;
+    }
+    .nav-sub li a:not(.is-active):hover {
+      color: var(--ink);
+      transform: translateX(4px);
+    }
+    .nav-sub li a:not(.is-active):hover::before {
+      opacity: 0.4;
+      transform: translateY(-50%) translateX(0);
+    }
+    .nav-sub li a.is-active {
+      color: var(--ink);
+      transform: translateX(14px);
+    }
+    .nav-sub li a.is-active::before {
+      opacity: 1;
+      color: var(--ink-soft);
+      transform: translateY(-50%) translateX(0);
+    }
+
+    /* sidebar footer */
+    .side-foot {
+      margin-top: auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+    }
+    .side-foot a {
+      color: var(--ink-muted);
+      letter-spacing: 0.02em;
+    }
+    .side-foot a:hover { color: var(--ink); }
+
+    /* Inline-expand contact: footer unfolds the email in place */
+    .contact-wrap { display: flex; flex-direction: column; }
+    .contact-toggle {
+      font-family: inherit;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      color: var(--ink-muted);
+      background: none;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      text-align: left;
+      cursor: pointer;
+    }
+    .contact-toggle:hover { color: var(--ink); }
+    .contact-reveal {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition: grid-template-rows 0.32s ease, opacity 0.32s ease, margin-top 0.32s ease;
+    }
+    .contact-reveal-inner { overflow: hidden; }
+    .contact-wrap.is-open .contact-reveal {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      margin-top: 6px;
+    }
+
+    /* ---------- Content area ---------- */
+    .content {
+      padding: 64px 64px 96px;
+      max-width: calc(var(--content-max) + 128px);
+    }
+
+    .view-head {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin: 0 0 28px;
+    }
+
+    /* ---------- Tiles ---------- */
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      max-width: var(--content-max);
+    }
+
+    .tile {
+      position: relative;
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 1;
+      background: var(--bg-tile);
+      border: 1px solid var(--rule);
+      overflow: hidden;
+      transition: transform 320ms cubic-bezier(0.2,0.7,0.2,1),
+                  background-color 320ms ease,
+                  border-color 320ms ease,
+                  box-shadow 320ms ease;
+      will-change: transform;
+    }
+
+    /* Half-height tiles for Writing: quieter weight than Film tiles. */
+    .tile-half { aspect-ratio: 8 / 1; min-height: 72px; }
+    .tile-half .tile-text {
+      bottom: 16px;
+      /* Text shifts right by the drawing slot width (120px) + small gap (14px).
+         The slot width was picked from the average of the four processed
+         drawings' aspect-fit widths at ~90px rendered height. */
+      left: 152px;
+    }
+    .tile-half .tile-title { font-size: clamp(18px, 1.8vw, 22px); margin-bottom: 2px; }
+    .tile-half .tile-meta { font-size: 11.5px; }
+    .tile-half .tile-marker { top: 10px; font-size: 9.5px; }
+    /* Drawing slot for each Writing tile: anchored left, vertically centered,
+       drawing fitted within a uniform 120 x 90 box so the four tiles line
+       up cleanly regardless of each drawing's native aspect. */
+    .tile-drawing {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 120px;
+      height: 90px;
+      object-fit: contain;
+      object-position: center;
+      mix-blend-mode: multiply;  /* lets the cream tile show through the line */
+      pointer-events: none;
+      user-select: none;
+    }
+    /* Writing grid: tighter gutter to read as a related set, not a list. */
+    #view-writing .grid { gap: 18px; }
+    .tile:hover {
+      transform: scale(1.018);
+      background: var(--bg-tile-hover);
+      border-color: #d8d2c5;
+      box-shadow: 0 18px 40px -28px rgba(26,24,22,0.18);
+    }
+    .tile:focus-visible {
+      outline: 1px solid var(--ink);
+      outline-offset: 4px;
+    }
+
+    .tile-hero {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 45%, rgba(107,58,30,0.05), transparent 60%),
+        radial-gradient(ellipse at 75% 55%, rgba(26,24,22,0.03), transparent 55%),
+        linear-gradient(135deg, #f1ede5 0%, #e9e3d6 100%);
+      transition: filter 320ms ease;
+    }
+    .tile:hover .tile-hero { filter: brightness(1.02) contrast(1.03); }
+
+    .tile-hero::after {
+      content: "";
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.4'/></svg>");
+      opacity: 0.06;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    /* ---------- Tile media (Film tiles): poster + video + scrim ---------- */
+    /* Stacking order inside .tile-has-media (bottom to top):
+       1. .tile-hero        — gradient fallback if media fails to load
+       2. .tile-poster      — first-frame still, always visible
+       3. .tile-video       — opacity 0 default, 1 on hover, plays on hover
+       4. .tile-scrim       — bottom-edge darkening so light text stays readable
+                              across both very dark and very bright posters
+       5. .tile-text        — title + metadata
+    */
+    .tile-has-media .tile-hero { z-index: 0; }
+    .tile-poster,
+    .tile-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      display: block;
+    }
+    .tile-poster { z-index: 1; }
+    .tile-video {
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 320ms ease;
+    }
+    .tile-has-media:hover .tile-video {
+      opacity: 1;
+    }
+    .tile-scrim {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background: linear-gradient(to top,
+                    rgba(10, 9, 8, 0.66) 0%,
+                    rgba(10, 9, 8, 0.30) 28%,
+                    rgba(10, 9, 8, 0.00) 55%);
+    }
+    /* Text rides above the media stack and switches to bone off-white so it
+       reads on both Envoys (near-black) and Recursion (bright white) posters. */
+    .tile-has-media .tile-text { z-index: 4; }
+    .tile-has-media .tile-title { color: #efeadc; }
+    .tile-has-media .tile-meta { color: rgba(232, 226, 212, 0.78); }
+
+    .tile-marker {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      font-family: 'Fraunces', monospace;
+      font-weight: 300;
+      font-style: italic;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: var(--ink-faint);
+    }
+
+    .tile-text {
+      position: absolute;
+      left: 28px;
+      bottom: 22px;
+      right: 28px;
+      pointer-events: none;
+    }
+    .tile-title {
+      font-family: 'Newsreader', serif;
+      font-weight: 500;
+      font-variation-settings: "opsz" 60;
+      letter-spacing: 0.005em;
+      font-size: clamp(22px, 2.4vw, 30px);
+      color: var(--ink);
+      margin: 0 0 2px;
+      line-height: 1.05;
+    }
+    .tile-meta {
+      font-family: 'Newsreader', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 13px;
+      color: var(--ink-muted);
+      letter-spacing: 0.02em;
+    }
+
+    /* ---------- Views ---------- */
+    .view { display: none; }
+    .view.is-active { display: block; }
+
+    /* ---------- Subpage template ---------- */
+    .subpage-head { margin: 0 0 40px; max-width: var(--content-max); }
+    .subpage-title {
+      font-family: 'Newsreader', serif;
+      font-weight: 500;
+      font-variation-settings: "opsz" 60;
+      font-size: clamp(34px, 4.4vw, 52px);
+      letter-spacing: 0.005em;
+      line-height: 1.05;
+      color: var(--ink);
+      margin: 0 0 10px;
+    }
+    .subpage-meta {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      color: var(--ink-muted);
+      margin: 0;
+    }
+    .subpage-media-slot {
+      width: 100%;
+      max-width: var(--content-max);
+      aspect-ratio: 16 / 9;
+      background: var(--bg-tile);
+      border: 1px solid var(--rule);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 0 56px;
+    }
+    .subpage-section {
+      max-width: 680px;
+      margin: 0 0 44px;
+    }
+    /* Film stills break out to the full content width (trailer width) so a
+       pair sitting side by side spans the page like the trailer above. */
+    .subpage-section-wide { max-width: var(--content-max); }
+    .subpage-section-head {
+      font-family: 'Newsreader', serif;
+      font-weight: 500;
+      font-variation-settings: "opsz" 60;
+      font-size: clamp(22px, 2.2vw, 28px);
+      letter-spacing: 0.005em;
+      line-height: 1.1;
+      text-transform: none;
+      color: var(--ink);
+      margin: 0 0 20px;
+    }
+    .slot-marker, .slot-text {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: 13px;
+      color: var(--ink-faint);
+      letter-spacing: 0.02em;
+      margin: 0;
+    }
+    .slot-marker::before, .slot-text::before {
+      content: "[ ";
+    }
+    .slot-marker::after, .slot-text::after {
+      content: " ]";
+    }
+    .subpage-foot {
+      max-width: var(--content-max);
+      margin-top: 72px;
+      padding-top: 28px;
+      border-top: 1px solid var(--rule);
+    }
+    .subpage-contact {
+      font-family: 'Newsreader', serif;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      color: var(--ink-muted);
+    }
+    .subpage-contact:hover { color: var(--ink); }
+
+    /* ---------- Envoys subpage: rich content blocks ---------- */
+
+    /* Trailer iframe sits where the placeholder slot used to. 16:9 ratio. */
+    .subpage-trailer {
+      width: 100%;
+      max-width: var(--content-max);
+      aspect-ratio: 16 / 9;
+      margin: 0 0 56px;
+      border: 1px solid var(--rule);
+      background: var(--bg-tile);
+      overflow: hidden;
+    }
+    .subpage-trailer iframe {
+      width: 100%; height: 100%;
+      border: 0; display: block;
+    }
+
+    /* Body prose for description paragraphs. Larger and more readable than
+       the placeholder slot text used previously. */
+    .subpage-prose {
+      max-width: 680px;
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    .subpage-prose p {
+      margin: 0 0 18px;
+    }
+    .subpage-prose p:last-child { margin-bottom: 0; }
+    .subpage-prose em { font-style: italic; }
+
+    /* Cast section: label + names on the same line, two stacked lines.
+       The label is the small uppercase tracking-out treatment used elsewhere. */
+    .cast-line {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin: 0 0 10px;
+      max-width: 680px;
+      flex-wrap: wrap;
+    }
+    .cast-line:last-child { margin-bottom: 0; }
+    .cast-label {
+      font-family: 'Newsreader', serif;
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      flex-shrink: 0;
+      min-width: 96px;
+    }
+    .cast-names {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 1.45;
+      color: var(--ink);
+    }
+
+    /* Press tile: same 8:1 tile shell as Writing tiles, but no left image
+       slot. Instead a pull-quote takes the full title row, attribution
+       sits as meta. Vertically centered, generous left padding so the
+       quote reads as type rather than UI. */
+    /* Press & award tiles need more vertical room than the default 8:1
+       writing-tile shell so the multi-line pull-quote isn't clipped. */
+    .tile-press, .tile-award { min-height: 96px; }
+    .tile-review-cta {
+      position: absolute;
+      right: 16px;
+      bottom: 10px;
+      font-family: 'Newsreader', serif;
+      font-style: italic;
+      font-size: clamp(12px, 1.1vw, 14px);
+      color: var(--ink);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .tile-press:hover .tile-review-cta,
+    .tile-press:focus-visible .tile-review-cta { opacity: 0.72; }
+    .tile-press .tile-text {
+      left: 32px;
+      right: 32px;
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
+    }
+    .tile-press .tile-quote {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: clamp(14px, 1.3vw, 17px);
+      line-height: 1.35;
+      color: var(--ink);
+      margin: 0 0 2px;
+      font-style: italic;
+    }
+    .tile-press .tile-attribution {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: 12px;
+      color: var(--ink-muted);
+      letter-spacing: 0.02em;
+      margin: 0;
+    }
+
+    /* Award tile: laurel sits on the right (so this tile mirrors a Writing
+       tile, image on the right side of the row instead of left). Text on
+       the left reads as the award statement. */
+    .tile-award .tile-text {
+      left: 32px;
+      right: 160px;   /* reserved for laurel slot */
+      top: 50%;
+      bottom: auto;
+      transform: translateY(calc(-50% + 13px));
+    }
+    .tile-award .tile-title {
+      font-family: 'Newsreader', serif;
+      font-weight: 500;
+      font-size: clamp(18px, 1.8vw, 22px);
+      letter-spacing: 0.005em;
+      line-height: 1.1;
+      color: var(--ink);
+      margin: 0 0 2px;
+    }
+    .tile-award .tile-meta {
+      font-family: 'Newsreader', serif;
+      font-size: 12.5px;
+      color: var(--ink-muted);
+      letter-spacing: 0.02em;
+    }
+    .tile-award .tile-laurel {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: calc(100% - 16px);
+      width: auto;
+      max-width: 132px;
+      object-fit: contain;
+      object-position: center;
+      pointer-events: none;
+      opacity: 0.92;
+    }
+
+    /* Stills grids — magnification on hover (same scale/feel as Film tile bulge). */
+    .stills-grid {
+      display: grid;
+      gap: 14px;
+      max-width: var(--content-max);
+    }
+    /* Production stills: 6 columns, dense flow, items span 2–3 columns and
+       1–2 rows to create the mixed-aspect/masonry feel. */
+    /* No-crop masonry: each still keeps its native aspect ratio (image height
+       is auto), and JS sets each tile's row-span from its rendered height so
+       tiles pack tightly with no gaps and nothing is ever cropped. Featured
+       stills (the numbered 1-5) span half the width; the rest span a quarter. */
+    .stills-production {
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: 8px;
+      grid-auto-flow: row dense;
+    }
+    .stills-production .still.feat { grid-column: span 6; }
+    .stills-production .still.reg  { grid-column: span 3; }
+    .stills-production .still > img { width: 100%; height: auto; display: block; }
+    /* Borderless production stills: no box, outline, or shadow — only the photo. */
+    .stills-production .still { background: transparent; border: none; }
+    .stills-production .still:hover { border-color: transparent; box-shadow: none; }
+    /* Film stills: uniform 2 columns × 6 rows = 12 cells, each 16:9.
+       A pair lines up to roughly the trailer width. */
+    .stills-film {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .stills-film .still { aspect-ratio: 16 / 9; }
+    .stills-film .still { background: transparent; border: none; }
+    .stills-film .still:hover { border-color: transparent; box-shadow: none; }
+
+    /* Rospo stills: assorted mosaic — landscape + portrait tiles only, no
+       extreme aspect ratios. Dense packing across 6 columns tiles cleanly. */
+    .stills-rospo {
+      grid-template-columns: repeat(6, 1fr);
+      grid-auto-rows: 118px;
+      grid-auto-flow: dense;
+    }
+    .stills-rospo .still.land { grid-column: span 3; grid-row: span 2; }
+    .stills-rospo .still.port { grid-column: span 2; grid-row: span 3; }
+    .stills-rospo .still.wide { grid-column: span 6; grid-row: span 2; }
+
+    /* Ellingwood stills: uniform 4 columns x 3 rows = 12 square cells. */
+    .stills-ellingwood {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .stills-ellingwood .still { aspect-ratio: 1 / 1; }
+
+    /* Poster Art: 3 columns. Posters across the top row, each square art
+       blowup sitting directly below its corresponding poster. */
+    .poster-art-grid {
+      display: grid;
+      gap: 14px;
+      max-width: var(--content-max);
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .poster-art-grid .still.poster { aspect-ratio: 11 / 17; }
+    .poster-art-grid .still.art    { aspect-ratio: 1 / 1; }
+
+    /* Program: simple inline PDF reader. Flippable spread-reader is a later,
+       separate build; for now the program is embedded and scrollable. */
+    .program-reader {
+      width: 100%;
+      max-width: var(--content-max);
+      height: 760px;
+      border: 1px solid var(--rule);
+      background: var(--bg-tile);
+      overflow: hidden;
+    }
+    .program-reader iframe { width: 100%; height: 100%; border: 0; display: block; }
+    .program-note {
+      margin: 14px 0 0;
+      font-family: 'Newsreader', serif;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      color: var(--ink-muted);
+    }
+    .program-note a { color: var(--ink-muted); border-bottom: 1px solid var(--rule); }
+    .program-note a:hover { color: var(--ink); }
+
+    /* Common still treatment: placeholder bg + hover magnification. */
+    .still {
+      position: relative;
+      background: var(--bg-tile);
+      border: 1px solid var(--rule);
+      overflow: hidden;
+      transition: transform 320ms cubic-bezier(0.2,0.7,0.2,1),
+                  box-shadow 320ms ease,
+                  border-color 320ms ease,
+                  background-color var(--dm-dur) ease,
+                  border-color var(--dm-dur) ease;
+      will-change: transform;
+    }
+    .still:hover {
+      transform: scale(1.04);
+      z-index: 2;
+      border-color: #d8d2c5;
+      box-shadow: 0 22px 48px -28px rgba(26,24,22,0.28);
+    }
+    body.dark-mode .still:hover {
+      border-color: #3a352d;
+      box-shadow: 0 22px 48px -28px rgba(0,0,0,0.7);
+    }
+    /* Quiet placeholder marker centered in each still — removed when real
+       images replace these via src. */
+    .still-marker {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      color: var(--ink-faint);
+      pointer-events: none;
+    }
+
+    /* Mobile adjustments for stills grids */
+    @media (max-width: 767px) {
+      .stills-production {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 6px;
+      }
+      .stills-production .still.feat { grid-column: span 2; }
+      .stills-production .still.reg  { grid-column: span 1; }
+      .stills-film {
+        grid-template-columns: repeat(1, 1fr);
+      }
+      .stills-rospo {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 96px;
+      }
+      .stills-rospo .still.land,
+      .stills-rospo .still.port,
+      .stills-rospo .still.wide { grid-column: span 1; grid-row: span 2; }
+      .stills-ellingwood { grid-template-columns: repeat(2, 1fr); }
+      .poster-art-grid { gap: 9px; }
+      .tile-award .tile-text { right: 90px; }
+      .tile-award .tile-laurel { max-width: 76px; right: 10px; }
+      .subpage-trailer { margin-bottom: 36px; }
+    }
+
+    /* About view */
+    .about-stage {
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+    .figure-large {
+      height: min(64vh, 560px);
+      width: auto;
+      mix-blend-mode: multiply;
+      opacity: 0.94;
+      filter: contrast(1.04);
+      transform-origin: 50% 95%;
+      animation: breathe 5.2s ease-in-out infinite,
+                 sway 7.4s ease-in-out infinite;
+    }
+    @keyframes breathe {
+      0%, 100% { transform: translateY(0px) rotate(-0.4deg); }
+      50%      { transform: translateY(-3px) rotate(0.3deg); }
+    }
+    @keyframes sway {
+      0%, 100% { filter: contrast(1.04); }
+      50%      { filter: contrast(1.08); }
+    }
+
+    /* About placeholder — empty text box that replaced the center figure.
+       Stand-in until real About copy is written. */
+    .about-textbox {
+      width: min(560px, 100%);
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--ink);
+      text-align: left;
+    }
+    .about-textbox p { margin: 0 0 18px; }
+    .about-textbox p:last-child { margin-bottom: 0; }
+    .about-textbox em { font-style: italic; }
+    .about-textbox a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      text-decoration-color: var(--ink-muted);
+      transition: text-decoration-color 0.18s ease;
+    }
+    .about-textbox a:hover { text-decoration-color: var(--ink); }
+
+    /* ---------- Dark mode (Envoys subpage only) ---------- */
+    /* The dark-mode transition duration is driven by a custom property.
+       Default 350ms is used when leaving dark mode (faster, since the user
+       is heading back to the "neutral" surface). On entry, body.dark-mode
+       overrides it to 700ms — slower, more deliberate, the world dimming.
+       Because the browser resolves transition values from the rule that
+       matches the END state of a class change, this asymmetry is automatic:
+       entry uses the dark-mode rule (700ms), exit uses the default (350ms). */
+    :root { --dm-dur: 350ms; }
+    body.dark-mode { --dm-dur: 700ms; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      transition: background-color var(--dm-dur) ease, color var(--dm-dur) ease;
+    }
+    .sidebar {
+      transition: border-color var(--dm-dur) ease;
+    }
+    /* Nav elements (.nav-cat, .nav-sub li a, .nav-sub li a::before) are
+       intentionally NOT included here — they have their own multi-property
+       transitions further up (transform + color) and a single-property
+       transition declaration would overwrite them, killing the slide-right
+       + em-dash animation. Their 220ms color transition is fast enough to
+       read as part of the dark-mode flip anyway. */
+    .wordmark .given, .wordmark .sur,
+    .side-foot a, .view-head,
+    .subpage-title, .subpage-meta, .subpage-section-head,
+    .slot-marker, .slot-text, .subpage-contact,
+    .tile-title, .tile-meta, .tile-marker {
+      transition: color var(--dm-dur) ease;
+    }
+    .subpage-media-slot, .subpage-foot {
+      transition: background-color var(--dm-dur) ease,
+                  border-color var(--dm-dur) ease;
+    }
+    /* Tile already animates transform/background-color on hover; extend to
+       cover the palette flip. transform/box-shadow stay at hover speed. */
+    .tile, .tile-hero {
+      transition: transform 320ms cubic-bezier(0.2,0.7,0.2,1),
+                  background-color var(--dm-dur) ease,
+                  background var(--dm-dur) ease,
+                  border-color var(--dm-dur) ease,
+                  box-shadow 320ms ease,
+                  filter var(--dm-dur) ease;
+    }
+    /* Figure: filter transitions, mix-blend-mode does not (steps at 0s). */
+    .mark, .figure-large {
+      transition: filter var(--dm-dur) ease, opacity var(--dm-dur) ease;
+    }
+
+    body.dark-mode {
+      --bg:             #14130f;
+      --bg-tile:        #1c1b17;
+      --bg-tile-hover:  #232117;
+      --ink:            #efeadc;
+      --ink-soft:       #d8d2c0;
+      --ink-muted:      #918874;
+      --ink-faint:      #4c453c;
+      --rule:           #2a2722;
+    }
+    body.dark-mode .mark,
+    body.dark-mode .figure-large {
+      filter: invert(1) contrast(1.08);
+      mix-blend-mode: screen;
+    }
+    /* Keep the sidebar sprite inverted (light) on the Envoys dark page even
+       while the cursor is over the menu. Without this, .sidebar:hover .mark
+       (specificity 0,3,0) outranks the dark-mode invert (0,2,1) and the
+       sprite snaps back to dark on hover. Higher specificity (0,3,1) keeps
+       it light; mix-blend-mode: screen is inherited from the rule above. */
+    body.dark-mode .sidebar:hover .mark {
+      filter: invert(1) contrast(1.08);
+    }
+    /* Tile heroes use a literal gradient — override in dark mode so they
+       don't look like blown-out light boxes on a dark field. */
+    body.dark-mode .tile-hero {
+      background:
+        radial-gradient(ellipse at 30% 45%, rgba(184,130,80,0.06), transparent 60%),
+        radial-gradient(ellipse at 75% 55%, rgba(239,234,220,0.025), transparent 55%),
+        linear-gradient(135deg, #1c1b17 0%, #161410 100%);
+    }
+
+    /* ---------- Entrance cascade ---------- */
+    /* On view change (except About), major blocks inside the new view fade
+       in top-to-bottom while sliding left-to-right. Each block holds the
+       initial state during its delay (animation-fill-mode: both), then
+       animates to its resting position. Stagger is driven by an inline
+       --cascade-i index set by JS so it works regardless of DOM nesting
+       (e.g. tiles inside .grid). */
+    @keyframes cascade-in {
+      from { opacity: 0; transform: translateX(16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .cascade-item {
+      animation: cascade-in 840ms cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+      animation-delay: calc(var(--cascade-i, 0) * 160ms);
+      /* fill-mode: backwards (NOT both) — holds the from-state during the
+         delay, then releases the element back to its base CSS after the
+         animation ends. Using "both" leaves the keyframe's `translateX(0)`
+         permanently applied to the element, which silently overrides any
+         subsequent transform — e.g. the hover scale-bulge on tiles. */
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cascade-item { animation: none; }
+    }
+
+    /* ---------- Mobile / tablet ---------- */
+    @media (max-width: 1023px) {
+      :root { --sidebar-w: 240px; }
+      .content { padding: 48px 40px 80px; }
+    }
+
+    @media (max-width: 767px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        height: auto;
+        flex-direction: column;
+        border-right: none;
+        border-bottom: 1px solid var(--rule);
+        padding: 28px 22px 22px;
+        gap: 18px;
+      }
+      .mark { height: 110px; align-self: center; }
+      .wordmark { text-align: center; font-size: 20px; }
+      .nav { flex-direction: row; flex-wrap: wrap; gap: 12px 22px; justify-content: center; }
+      .nav-group { gap: 2px; align-items: center; }
+      .nav-cat { align-self: auto; }
+      /* Mobile horizontal nav: keep the active grow restrained so it doesn't
+         push the row out of alignment, but the slide-right + em-dash
+         animation on project links is restored to match desktop. */
+      .nav-cat.is-active { font-size: 15px; }
+      .nav-cat[data-view]:hover { font-size: 14px; letter-spacing: 0.035em; }
+      .nav-sub { flex-direction: row; flex-wrap: wrap; gap: 4px 12px; justify-content: center; }
+      .nav-sub li a { font-size: 12px; }
+      .side-foot {
+        border-top: 1px dashed var(--rule);
+        padding-top: 16px; margin-top: 4px;
+        align-items: center;
+        text-align: center;
+      }
+      .content { padding: 28px 18px 64px; }
+      .grid { gap: 18px; }
+      /* 4:1 tiles are short on narrow screens — vertically center the title
+         and tuck the marker bottom-right so they don't collide */
+      .tile-text {
+        left: 18px; right: 18px;
+        top: 50%; bottom: auto;
+        transform: translateY(-50%);
+      }
+      /* Writing-tile drawings shrink on mobile; text shifts right by the
+         smaller slot width + small gap (12px + 56px + 14px ≈ 82px). */
+      .tile-drawing { width: 56px; height: 42px; left: 12px; }
+      .tile-half .tile-text { left: 82px; }
+      .tile-title { font-size: 17px; letter-spacing: 0.01em; line-height: 1.1; }
+      .tile-meta { font-size: 11px; }
+      .tile-marker {
+        top: auto; left: auto;
+        bottom: 8px; right: 12px;
+        font-size: 9px; opacity: 0.55;
+      }
+      .tile { transform: none; }
+      .tile:hover { transform: none; }
+      .about-stage { min-height: 60vh; padding: 16px; }
+      .figure-large { height: min(56vh, 460px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .figure-large { animation: none; }
+      .sidebar:hover .mark { animation: none; }
+      .tile, .tile-hero,
+      .nav-sub li a, .nav-sub li a::before,
+      .nav-cat { transition: none; }
+      .tile:hover { transform: none; }
+    }
+
+    /* ---------- Curtain (landing overlay) ---------- */
+    /* The first thing a visitor sees: man + name + horse on the bare field,
+       with NO sidebar -- the curtain before the show. Clicking the name lifts
+       the curtain and reveals the Film page (sidebar appears for the first
+       time). Any deep-link hash skips the curtain entirely. */
+    .curtain {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      opacity: 1;
+      transition: opacity 760ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+    .curtain.is-hidden { opacity: 0; pointer-events: none; }
+    .curtain-stage {
+      display: flex;
+      align-items: flex-end;          /* man + horse share a ground line */
+      justify-content: center;
+      gap: clamp(48px, 9vw, 180px);   /* ample space framing the name */
+    }
+    .curtain-fig {
+      width: auto;
+      mix-blend-mode: normal;         /* transparent line-art now floats on its own */
+      opacity: 0.95;
+      filter: contrast(1.04);
+      user-select: none;
+      pointer-events: none;
+    }
+    /* Quarter-scale figures; horse height matched to the man (source horse is drawn
+       shorter, intentionally not to scale) so the two stand eye-to-eye. */
+    .curtain-man   { width: 136px; height: 204px; }
+    .curtain-horse { width: 204px; height: 204px; }
+    .curtain-name {
+      align-self: center;             /* name floats to the vertical center of the gap */
+      font-family: 'Newsreader', serif;
+      font-weight: 500;
+      font-variation-settings: "opsz" 60;
+      font-size: 44px;                /* twice the sidebar wordmark -- the centerpiece */
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+      color: var(--ink);
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .curtain-name .given,
+    .curtain-name .sur { display: block; font-weight: 500; }
+
+    /* Short viewports: scale the whole composition down so the 150% figures
+       never overflow, while preserving their relative sizing. */
+    @media (max-height: 900px) { .curtain-stage { transform: scale(0.84); } }
+    @media (max-height: 760px) { .curtain-stage { transform: scale(0.68); } }
+
+    /* Narrow screens: stack man / name / horse vertically. */
+    @media (max-width: 767px) {
+      .curtain { padding: 24px; }
+      .curtain-stage {
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+        transform: none;
+      }
+      .curtain-man   { width: auto; height: 22vh; max-height: 200px; }
+      .curtain-horse { width: auto; height: 22vh; max-height: 200px; }
+    }
+
+
+    /* Photo lightbox: click any still (Envoys/Rospo galleries) to enlarge it
+       over a dimmed screen; click outside the photo (or Esc) to restore. */
+    .still img { cursor: zoom-in; }
+    #lightbox {
+      position: fixed; inset: 0; z-index: 9000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 3vh 3vw;
+      background: rgba(10,9,8,0.82);
+      opacity: 0; visibility: hidden;
+      transition: opacity 300ms ease, visibility 0s linear 300ms;
+      cursor: zoom-out;
+    }
+    #lightbox.open { opacity: 1; visibility: visible; transition: opacity 300ms ease; }
+    #lightbox img {
+      max-width: 94vw; max-height: 94vh;
+      object-fit: contain;
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.7);
+      cursor: default;
+      transform: scale(0.8);
+      opacity: 0;
+      transition: transform 320ms cubic-bezier(0.2,0.8,0.2,1), opacity 260ms ease;
+    }
+    #lightbox.open img { transform: scale(1); opacity: 1; }
+  </style>
+</head>
+<body>
+  <!-- CURTAIN -- landing overlay shown before the site (no sidebar). -->
+  <div class="curtain" id="curtain" role="dialog" aria-label="Joe(y) Disorbo — enter site">
+    <div class="curtain-stage">
+      <img class="curtain-fig curtain-man" src="assets/drawings/lobby/Man_03_cut.png"
+           alt="Ink drawing of a man, facing right" width="136" height="204">
+      <a class="curtain-name" href="#work" aria-label="Joe(y) Disorbo — enter">
+        <span class="given">Joe(y)</span>
+        <span class="sur">Disorbo</span>
+      </a>
+      <img class="curtain-fig curtain-horse" src="assets/drawings/lobby/Horse_03_cut.png"
+           alt="Ink drawing of a horse, facing left" width="204" height="204">
+    </div>
+  </div>
+
+  <div class="shell">
+
+    <aside class="sidebar" aria-label="Global navigation">
+
+      <div class="wordmark">
+        <a href="#about" data-view="about" aria-label="Joe(y) Disorbo — home">
+          <span class="given">Joe(y)</span>
+          <span class="sur">Disorbo</span>
+        </a>
+      </div>
+
+      <img class="mark" src="assets/drawings/logo_main_cut.png"
+           alt="Drawing of the figure's head — large, angular, pitched forward, in nervous continuous line. Site logo mark."
+           width="248" height="231">
+
+      <nav class="nav" aria-label="Primary">
+
+        <div class="nav-group">
+          <button class="nav-cat" data-view="about">About</button>
+        </div>
+
+        <div class="nav-group">
+          <button class="nav-cat" data-view="work">Film</button>
+          <ul class="nav-sub">
+            <li><a href="#envoys" data-project="envoys">Envoys</a></li>
+            <li><a href="#recursion" data-project="recursion">Recursion</a></li>
+            <li><a href="#reefbreaker-bay" data-project="reefbreaker-bay">Reefbreaker Bay</a></li>
+            <li><a href="#rospo" data-project="rospo">Rospo</a></li>
+          </ul>
+        </div>
+
+        <div class="nav-group">
+          <button class="nav-cat" data-view="writing">Writing</button>
+          <!-- Writing intentionally has no nested list; the tiles live only in
+               the Writing view. They go to external destinations rather than
+               internal subpages, so a sidebar index is redundant. -->
+        </div>
+
+      </nav>
+
+      <div class="side-foot">
+        <div class="contact-wrap">
+          <button class="contact-toggle" type="button" aria-expanded="false">contact</button>
+          <div class="contact-reveal">
+            <div class="contact-reveal-inner">
+              <a href="mailto:souleborne@gmail.com">souleborne@gmail.com</a>
+            </div>
+          </div>
+        </div>
+        <a href="https://vimeo.com/user95931263" target="_blank" rel="noopener">older work</a>
+      </div>
+
+    </aside>
+
+    <main class="content">
+
+      <!-- WORK / LANDING VIEW (Film tiles) -->
+      <section class="view is-active" id="view-work" aria-labelledby="work-head">
+        <p class="view-head" id="work-head">Film</p>
+        <div class="grid">
+
+          <a class="tile tile-has-media" href="#envoys" aria-label="Envoys — feature film, 65 minutes, 2026">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-poster" src="assets/posters/envoys_web_poster.jpg" alt="" aria-hidden="true">
+            <video class="tile-video" src="assets/videos/envoys_web.mp4"
+                   muted loop playsinline preload="metadata" aria-hidden="true"></video>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <div class="tile-text">
+              <h2 class="tile-title">Envoys</h2>
+              <p class="tile-meta">Feature Film — 65 min — 2026</p>
+            </div>
+          </a>
+
+          <a class="tile tile-has-media" href="#recursion" aria-label="Recursion — horror feature, in development">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-poster" src="assets/posters/recursion_web_poster.jpg" alt="" aria-hidden="true">
+            <video class="tile-video" src="assets/videos/recursion_web.mp4"
+                   muted loop playsinline preload="metadata" aria-hidden="true"></video>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <div class="tile-text">
+              <h2 class="tile-title">Recursion</h2>
+              <p class="tile-meta">Horror Feature — In Development</p>
+            </div>
+          </a>
+
+          <a class="tile tile-has-media" href="#reefbreaker-bay" aria-label="Reefbreaker Bay (working title) — Work in progress">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-poster" src="assets/posters/reefbreaker_web_poster.jpg" alt="" aria-hidden="true">
+            <video class="tile-video" src="assets/videos/reefbreaker_web.mp4"
+                   muted loop playsinline preload="metadata" aria-hidden="true"></video>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <div class="tile-text">
+              <h2 class="tile-title">Reefbreaker Bay <span style="font-weight:400;font-size:0.62em;color:rgba(232,226,212,0.7);letter-spacing:0.02em;">(working title)</span></h2>
+              <p class="tile-meta">Work in progress</p>
+            </div>
+          </a>
+
+          <a class="tile tile-has-media" href="#rospo" aria-label="Rospo — three-act stage play, 2023">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-poster" src="assets/posters/rospo_web_poster.jpg" alt="" aria-hidden="true">
+            <video class="tile-video" src="assets/videos/rospo_web.mp4"
+                   muted loop playsinline preload="metadata" aria-hidden="true"></video>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <div class="tile-text">
+              <h2 class="tile-title">Rospo</h2>
+              <p class="tile-meta">Three-Act Stage Play — 2023</p>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- WRITING VIEW — four placeholder tiles linking to external destinations -->
+      <section class="view" id="view-writing" aria-labelledby="writing-head">
+        <p class="view-head" id="writing-head">Writing</p>
+        <div class="grid">
+
+          <a class="tile tile-half" href="https://www.middleburycampus.com/article/2025/10/dont-study-abroad" data-external="true" data-project="dont-study-abroad" target="_blank" rel="noopener" aria-label="Don't Study Abroad — Opinion — October 2025">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-drawing" src="assets/drawings/writing/dont_study_abroad_ink.png" alt="" aria-hidden="true">
+            <div class="tile-text">
+              <h2 class="tile-title">Don't Study Abroad</h2>
+              <p class="tile-meta">Opinion — October 2025</p>
+            </div>
+          </a>
+
+          <a class="tile tile-half" href="https://www.middleburycampus.com/article/2025/09/ai-revisited" data-external="true" data-project="ai-revisited" target="_blank" rel="noopener" aria-label="AI Revisited — Opinion — September 2025">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-drawing" src="assets/drawings/writing/ai_revisited_ink.png" alt="" aria-hidden="true">
+            <div class="tile-text">
+              <h2 class="tile-title">AI Revisited</h2>
+              <p class="tile-meta">Opinion — September 2025</p>
+            </div>
+          </a>
+
+          <a class="tile tile-half" href="https://www.middleburycampus.com/article/2025/05/let-them-eat-cake" data-external="true" data-project="let-them-eat-cake" target="_blank" rel="noopener" aria-label="Let them eat cake — Opinion — May 2025">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-drawing" src="assets/drawings/writing/let_them_eat_cake_ink.png" alt="" aria-hidden="true">
+            <div class="tile-text">
+              <h2 class="tile-title">Let them eat cake</h2>
+              <p class="tile-meta">Opinion — May 2025</p>
+            </div>
+          </a>
+
+          <a class="tile tile-half" href="https://www.middleburycampus.com/article/2024/05/ai-academia-on-deaths-door" data-external="true" data-project="ai-academia-on-deaths-door" target="_blank" rel="noopener" aria-label="AI: Academia on death's door — Opinion — May 2024">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-drawing" src="assets/drawings/writing/ai_academia_ink.png" alt="" aria-hidden="true">
+            <div class="tile-text">
+              <h2 class="tile-title">AI: Academia on death's door</h2>
+              <p class="tile-meta">Opinion — May 2024</p>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- ABOUT VIEW -->
+      <section class="view" id="view-about" aria-labelledby="about-head">
+        <p class="view-head" id="about-head" style="position:absolute;left:-9999px;">About</p>
+        <div class="about-stage">
+          <div class="about-textbox">
+            <p>Joe Disorbo is a writer and director, raised between Singapore and Las Vegas. He attended boarding school in Europe, and obtained his undergraduate degree in a self-made major from Middlebury College in Vermont in 2026.</p>
+            <p>Growing up steeped in videogames and literature, Disorbo has an interest in marrying popular genre with deeper ideological inquiry; in his work, he grapples with hard literary and philosophical themes across a formidable range of tonal registers, not limited to absurdist comedy, realist horror, political thriller, and war.</p>
+            <p>Disorbo wrote, directed, produced, and shot his thesis project <a href="#envoys" class="about-link" data-route="project:envoys"><em>Envoys</em></a>, a war-thriller feature film shot on a crowdfunded budget of $9,800. He did the entire postproduction pipeline&mdash;editing, visual effects, 3-D, sound, and music composition&mdash;as a sole operator, over eighteen months. <em>Envoys</em> will be released free to the general public online Fall 2026, pending festival acceptances.</p>
+            <p>Disorbo&rsquo;s previous work includes <a href="#rospo" class="about-link" data-route="project:rospo"><em>ROSPO</em></a>, an independent three-act stage play that he produced when he was 20 years old; <a href="https://vimeo.com/showcase/9045088" target="_blank" rel="noopener">MMA</a> (Monday Morning Assembly), a 22-episode comedy news TV show he made in high school; <a href="#writing" class="about-link" data-route="view:writing">Opinion writing</a>; <a href="https://soundcloud.com/user-264815270" target="_blank" rel="noopener">Music compositions</a>, soundtrack and classical.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ENVOYS SUBPAGE -->
+      <section class="view" id="view-envoys" aria-labelledby="envoys-head">
+
+        <header class="subpage-head">
+          <h1 class="subpage-title" id="envoys-head">Envoys</h1>
+          <p class="subpage-meta">Feature Film — 65 min — 2026</p>
+        </header>
+
+        <div class="subpage-trailer">
+          <iframe
+            src="https://player.vimeo.com/video/1197848392?title=0&byline=0&portrait=0"
+            title="Envoys — trailer"
+            allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+            allowfullscreen
+            loading="lazy"></iframe>
+        </div>
+
+        <section class="subpage-section subpage-section-prose" aria-label="Description">
+          <div class="subpage-prose">
+            <p>In the aftermath of a second American civil war, two coalition envoys are sent to a remote rebel encampment to deliver a ceasefire ultimatum to its reclusive, fanatical commander.</p>
+            <p>Shot on a budget of $9,800, with a completely first-time cast and crew, <em>Envoys</em> is my attempt to raise the bar for what a student film can be. It is the first feature-length student film to be made at Middlebury College, and the first narrative thesis film made completely outside of the college's film department (in protestation of a 15-minute runtime rule).</p>
+          </div>
+        </section>
+
+        <section class="subpage-section" aria-labelledby="envoys-cast">
+          <h2 class="subpage-section-head" id="envoys-cast">Cast</h2>
+          <p class="cast-line">
+            <span class="cast-label">Starring</span>
+            <span class="cast-names">Georgia Crosby, Jin Lee, and Lonny Edwards</span>
+          </p>
+          <p class="cast-line">
+            <span class="cast-label">Supported by</span>
+            <span class="cast-names">Grace Dozeman, Jared Ahern, Ryan Carron, Chris Clyne, and Max Blumenthal</span>
+          </p>
+        </section>
+
+        <section class="subpage-section" aria-labelledby="envoys-press">
+          <h2 class="subpage-section-head" id="envoys-press">Press &amp; Awards</h2>
+          <div class="grid">
+
+            <a class="tile tile-half tile-press"
+               href="https://www.middleburycampus.com/article/2026/01/envoys-and-the-tale-of-an-independent-scholar"
+               data-external="true" target="_blank" rel="noopener"
+               aria-label="Press: Anthony Cinquina, The Middlebury Campus">
+              <div class="tile-hero" aria-hidden="true"></div>
+              <div class="tile-text">
+                <p class="tile-quote">&ldquo;The action sequences feel straight out of a major studio production — with set pieces that punch way above their weight class.&rdquo;</p>
+                <p class="tile-attribution">— Anthony Cinquina, <em>The Middlebury Campus</em></p>
+              </div>
+              <span class="tile-review-cta" aria-hidden="true">Read the full review&hellip;</span>
+            </a>
+
+            <a class="tile tile-half tile-award"
+               href="https://www.montrealindependentfilmmagazine.com/post/winners-of-the-montreal-independent-film-festival"
+               data-external="true" target="_blank" rel="noopener"
+               aria-label="Winner, Best Student Film — Montreal Independent Film Festival 2026">
+              <div class="tile-hero" aria-hidden="true"></div>
+              <div class="tile-text">
+                <h3 class="tile-title">Winner: Best Student Film</h3>
+                <p class="tile-meta">Montreal Independent Film Festival, 2026</p>
+              </div>
+              <img class="tile-laurel" src="assets/laurel_montreal_2026.png" alt="" aria-hidden="true">
+            </a>
+
+          </div>
+        </section>
+
+        <section class="subpage-section" aria-labelledby="envoys-prod-stills">
+          <h2 class="subpage-section-head" id="envoys-prod-stills">Production Stills</h2>
+          <div class="stills-grid stills-production" id="envoys-prod-grid">
+            <div class="still feat"><img src="assets/envoys/production-stills/1%20Medium.jpeg" alt="Envoys production still 1" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still reg"><img src="assets/envoys/production-stills/DSC_0131%20Medium.jpeg" alt="Envoys production still 2" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still feat"><img src="assets/envoys/production-stills/2%20Medium.jpeg" alt="Envoys production still 3" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still reg"><img src="assets/envoys/production-stills/IMG_3010%202%20Medium.jpeg" alt="Envoys production still 4" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still feat"><img src="assets/envoys/production-stills/3%20Medium.jpeg" alt="Envoys production still 5" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still reg"><img src="assets/envoys/production-stills/DSC_0338%20Medium.jpeg" alt="Envoys production still 6" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still feat"><img src="assets/envoys/production-stills/4%20Medium.jpeg" alt="Envoys production still 7" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still reg"><img src="assets/envoys/production-stills/IMG_3022%20Medium.jpeg" alt="Envoys production still 8" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still feat"><img src="assets/envoys/production-stills/5%20Medium.jpeg" alt="Envoys production still 9" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still reg"><img src="assets/envoys/production-stills/DSC_0581%20Medium.jpeg" alt="Envoys production still 10" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still reg"><img src="assets/envoys/production-stills/IMG_3034%20Medium.jpeg" alt="Envoys production still 11" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still reg"><img src="assets/envoys/production-stills/DSC_0634%20(1)%20Medium.jpeg" alt="Envoys production still 12" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still reg"><img src="assets/envoys/production-stills/DSC_0655%20(1)%20Medium.jpeg" alt="Envoys production still 13" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still reg"><img src="assets/envoys/production-stills/IMG_3058%20Medium.jpeg" alt="Envoys production still 14" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still reg"><img src="assets/envoys/production-stills/DSC_0886%20(1)%20Medium.jpeg" alt="Envoys production still 15" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still reg"><img src="assets/envoys/production-stills/icebreak%20Medium.jpeg" alt="Envoys production still 16" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+            <div class="still reg"><img src="assets/envoys/production-stills/icebreak2%20Medium.jpeg" alt="Envoys production still 17" loading="lazy" style="width:100%;height:auto;display:block;"></div>
+          </div>
+        </section>
+
+        <section class="subpage-section subpage-section-wide" aria-labelledby="envoys-film-stills">
+          <h2 class="subpage-section-head" id="envoys-film-stills">Film Stills</h2>
+          <div class="stills-grid stills-film">
+            <div class="still"><img src="assets/envoys/film-stills/1.jpeg" alt="Envoys film still 1" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/2.jpeg" alt="Envoys film still 2" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/3.jpeg" alt="Envoys film still 3" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/4.jpeg" alt="Envoys film still 4" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/5.jpeg" alt="Envoys film still 5" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/6.jpeg" alt="Envoys film still 6" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/7.jpeg" alt="Envoys film still 7" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/8.jpeg" alt="Envoys film still 8" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/9.jpeg" alt="Envoys film still 9" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/10.jpeg" alt="Envoys film still 10" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/11.jpeg" alt="Envoys film still 11" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/12.jpeg" alt="Envoys film still 12" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/13.jpeg" alt="Envoys film still 13" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/14.jpeg" alt="Envoys film still 14" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/15.jpeg" alt="Envoys film still 15" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/16.jpeg" alt="Envoys film still 16" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/17.jpeg" alt="Envoys film still 17" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/18.jpeg" alt="Envoys film still 18" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/19.jpeg" alt="Envoys film still 19" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+            <div class="still"><img src="assets/envoys/film-stills/20.jpeg" alt="Envoys film still 20" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+          </div>
+        </section>
+
+      </section>
+
+      <!-- SUMMER OF NOTHING SUBPAGE -->
+      <section class="view" id="view-recursion" aria-labelledby="rrb-head">
+
+        <header class="subpage-head">
+          <h1 class="subpage-title" id="rrb-head">Recursion</h1>
+          <p class="subpage-meta">Horror Feature — In Development</p>
+        </header>
+
+        <div class="subpage-media-slot" aria-label="Primary media — Recursion concept visual">
+          <img src="assets/recursion/Recursion%20placeholder.png" alt="Recursion — concept visual" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+
+        <section class="subpage-section subpage-section-prose" aria-label="Logline">
+          <div class="subpage-prose">
+            <p>Four junior physicists re-create their late mentor’s forbidden experiment — but when it strands one of them inside an endless tunnel, the others must enter the infinite themselves to pull her out.</p>
+          </div>
+        </section>
+
+        <section class="subpage-section subpage-section-prose" aria-label="Status">
+          <div class="subpage-prose">
+            <p><em>Script in Development</em></p>
+          </div>
+        </section>
+
+      </section>
+
+      <!-- ENSEMBLE COMEDY SUBPAGE -->
+      <section class="view" id="view-reefbreaker-bay" aria-labelledby="rb-head">
+
+        <header class="subpage-head">
+          <h1 class="subpage-title" id="rb-head">Reefbreaker Bay <span style="font-weight:400;font-size:0.4em;color:var(--ink-muted);letter-spacing:0.02em;vertical-align:middle;">(working title)</span></h1>
+          <p class="subpage-meta">Ensemble Comedy — Format TBD</p>
+        </header>
+
+        <div class="subpage-media-slot" aria-label="Primary media — Reefbreaker Bay visual">
+          <img src="assets/reefbreaker/Under_construction.png" alt="Reefbreaker Bay — under construction" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+
+      </section>
+
+      <!-- ROSPO SUBPAGE -->
+      <section class="view" id="view-rospo" aria-labelledby="rospo-head">
+
+        <header class="subpage-head">
+          <h1 class="subpage-title" id="rospo-head">Rospo</h1>
+          <p class="subpage-meta">Three-Act Stage Play — 2023</p>
+        </header>
+
+        <div class="subpage-trailer">
+          <iframe
+            src="https://player.vimeo.com/video/819297755?title=0&byline=0&portrait=0"
+            title="Rospo — recording"
+            allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+            allowfullscreen
+            loading="lazy"></iframe>
+        </div>
+
+        <section class="subpage-section subpage-section-prose" aria-label="Logline">
+          <div class="subpage-prose">
+            <p>A Catholic missionary and an atheist British aristocrat are stranded on a rowboat in the Atlantic Ocean after their cruise liner sinks — tensions rise until they witness an inexplicable event that shatters both their belief systems.</p>
+          </div>
+        </section>
+
+        <section class="subpage-section subpage-section-prose" aria-label="Description">
+          <div class="subpage-prose">
+            <p>Written for and produced in the Hepburn Zoo student theater at Middlebury College, <em>Rospo</em> is my theatrical directing debut and my first full-length narrative production. It was an entirely student-organized production — we even built the boat. <em>Rospo</em> sold out all three performances, not in small part from a guerrilla marketing campaign: over a thousand toad stickers hidden around the Middlebury campus&hellip; four years later, some still remain.</p>
+          </div>
+        </section>
+
+        <section class="subpage-section" aria-labelledby="rospo-cast">
+          <h2 class="subpage-section-head" id="rospo-cast">Cast</h2>
+          <div class="subpage-trailer" style="margin-bottom:28px;">
+            <iframe
+              src="https://player.vimeo.com/video/807258747?title=0&byline=0&portrait=0"
+              title="Rospo — cast interviews"
+              allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+              allowfullscreen
+              loading="lazy"></iframe>
+          </div>
+          <p class="cast-line">
+            <span class="cast-label">Starring</span>
+            <span class="cast-names">Alex Halaby and Peter McClearn</span>
+          </p>
+          <p class="cast-line">
+            <span class="cast-label">Supporting</span>
+            <span class="cast-names">Curran Amster, Josh Harkins, Sam Marquis, August Siegel, Rowan Goss, JT Meyer, and Ruby Taylor</span>
+          </p>
+        </section>
+
+        <section class="subpage-section" aria-labelledby="rospo-press">
+          <h2 class="subpage-section-head" id="rospo-press">Press</h2>
+          <div class="grid">
+            <a class="tile tile-half tile-press"
+               href="https://www.middleburycampus.com/article/2023/04/rospo-on-the-assumption-of-rats-and-theater-as-it-applies-to-an-understanding-of-god"
+               data-external="true" target="_blank" rel="noopener"
+               aria-label="Press: Eliza King Freedman, The Middlebury Campus">
+              <div class="tile-hero" aria-hidden="true"></div>
+              <div class="tile-text">
+                <p class="tile-quote">&ldquo;Introspective and staggeringly detailed&rdquo;</p>
+                <p class="tile-attribution">&mdash; Eliza King Freedman, <em>The Middlebury Campus</em></p>
+              </div>
+              <span class="tile-review-cta" aria-hidden="true">Read the full review&hellip;</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="subpage-section subpage-section-wide" aria-labelledby="rospo-program">
+          <h2 class="subpage-section-head" id="rospo-program">Program</h2>
+          <div class="program-reader">
+            <iframe src="assets/Rospo_final_final_program.pdf#view=FitH"
+                    title="Rospo — theater program"
+                    loading="lazy"></iframe>
+          </div>
+          <p class="program-note"><a href="assets/Rospo_final_final_program.pdf" target="_blank" rel="noopener">Open the full program in a new tab (PDF)</a></p>
+        </section>
+
+        <section class="subpage-section subpage-section-wide" aria-labelledby="rospo-ellingwood">
+          <h2 class="subpage-section-head" id="rospo-ellingwood">Photography — Finn Ellingwood</h2>
+          <div class="stills-grid stills-ellingwood">
+              <div class="still"><img src="assets/rospo/film-photos/Rospo.JPEG" alt="Rospo film still 1" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still"><img src="assets/rospo/film-photos/Rospo-2.JPEG" alt="Rospo film still 2" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still"><img src="assets/rospo/film-photos/Rospo-3.JPEG" alt="Rospo film still 3" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still"><img src="assets/rospo/film-photos/Rospo-4.JPEG" alt="Rospo film still 4" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still"><img src="assets/rospo/film-photos/Rospo-5.JPEG" alt="Rospo film still 5" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still"><img src="assets/rospo/film-photos/Rospo-6.JPEG" alt="Rospo film still 6" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still"><img src="assets/rospo/film-photos/Rospo-7.JPEG" alt="Rospo film still 7" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still"><img src="assets/rospo/film-photos/Rospo-8.JPEG" alt="Rospo film still 8" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still"><img src="assets/rospo/film-photos/Rospo-9.JPEG" alt="Rospo film still 9" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still"><img src="assets/rospo/film-photos/Rospo-10.JPEG" alt="Rospo film still 10" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still"><img src="assets/rospo/film-photos/Rospo-11.JPEG" alt="Rospo film still 11" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still"><img src="assets/rospo/film-photos/Rospo-12.JPEG" alt="Rospo film still 12" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+          </div>
+        </section>
+
+        <section class="subpage-section subpage-section-wide" aria-labelledby="rospo-posterart">
+          <h2 class="subpage-section-head" id="rospo-posterart">Poster Art</h2>
+          <div class="poster-art-grid">
+              <div class="still poster"><img src="assets/rospo/art-and-poster/Boat_Poster.PNG" alt="Rospo Boat poster" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still poster"><img src="assets/rospo/art-and-poster/Main_Poster%20Brenda.PNG" alt="Rospo Brenda poster" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still poster"><img src="assets/rospo/art-and-poster/Seminary_Poster.PNG" alt="Rospo Seminary poster" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still art"><img src="assets/rospo/art-and-poster/boat.PNG" alt="Rospo Boat poster art" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still art"><img src="assets/rospo/art-and-poster/Brenda.PNG" alt="Rospo Brenda poster art" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+              <div class="still art"><img src="assets/rospo/art-and-poster/Seminary.PNG" alt="Rospo Seminary poster art" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+          </div>
+        </section>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <script>
+    // Lightweight view router — sidebar persists, content swaps in place.
+    const views = {
+      work:                document.getElementById('view-work'),
+      writing:             document.getElementById('view-writing'),
+      about:               document.getElementById('view-about'),
+      envoys:              document.getElementById('view-envoys'),
+      'recursion': document.getElementById('view-recursion'),
+      'reefbreaker-bay':   document.getElementById('view-reefbreaker-bay'),
+      rospo:               document.getElementById('view-rospo'),
+    };
+    const catButtons = document.querySelectorAll('.nav-cat[data-view]');
+    const projectLinks = document.querySelectorAll('.nav-sub a[data-project]');
+
+    // Subpage view id -> sidebar project slug to highlight.
+    // (Subpage id == project slug here, but explicit map is clearer.)
+    const subpageProject = {
+      'envoys':              'envoys',
+      'recursion':   'recursion',
+      'reefbreaker-bay':     'reefbreaker-bay',
+      'rospo':               'rospo',
+    };
+    // Subpage view id -> which top-level category should look active.
+    const subpageCategory = {
+      'envoys':              'work',
+      'recursion':   'work',
+      'reefbreaker-bay':     'work',
+      'rospo':               'work',
+    };
+
+    // Dark mode is bound to Envoys only. Entry fades over 700ms, exit over
+    // 350ms — the asymmetry is handled in CSS via the --dm-dur custom
+    // property (overridden when body.dark-mode applies).
+    function setDarkMode(on) {
+      document.body.classList.toggle('dark-mode', on);
+    }
+
+    // Cascade entrance. For a given view, return the elements that should
+    // animate in. Grid views (work, writing) cascade the view-head plus the
+    // tiles (which live one level deep inside .grid). Subpages cascade their
+    // direct children.
+    function getCascadeTargets(viewEl) {
+      const grid = viewEl.querySelector(':scope > .grid');
+      if (grid) {
+        const targets = [];
+        const head = viewEl.querySelector(':scope > .view-head');
+        if (head) targets.push(head);
+        targets.push(...grid.children);
+        return targets;
+      }
+      return Array.from(viewEl.children).filter(el => el.tagName !== 'P' || !el.classList.contains('view-head') || el.id !== 'about-head');
+    }
+    function runCascade(viewEl) {
+      const targets = getCascadeTargets(viewEl);
+      // Clear any in-flight cascade so it restarts cleanly.
+      targets.forEach(el => el.classList.remove('cascade-item'));
+      // Force reflow to acknowledge the class removal before reapplying.
+      void viewEl.offsetWidth;
+      targets.forEach((el, i) => {
+        el.style.setProperty('--cascade-i', i);
+        el.classList.add('cascade-item');
+      });
+    }
+
+    // Track previously-active view so we only cascade when the view actually
+    // changes (not on re-clicks of the current one).
+    let currentView = null;
+
+    function setView(name) {
+      if (!views[name]) name = 'work';
+      Object.entries(views).forEach(([k, el]) => {
+        el.classList.toggle('is-active', k === name);
+      });
+      // Determine which category button should appear active.
+      const categoryForView =
+        (name === 'about')        ? 'about' :
+        (name === 'writing')      ? 'writing' :
+        (subpageCategory[name])   ? subpageCategory[name] :
+                                    'work';
+      catButtons.forEach(b => b.classList.toggle('is-active', b.dataset.view === categoryForView));
+      // Project link highlighting follows the subpage map.
+      projectLinks.forEach(a => {
+        const isActive = subpageProject[name] === a.dataset.project;
+        a.classList.toggle('is-active', isActive);
+      });
+      setDarkMode(name === 'envoys');
+      // Cascade on every navigation EXCEPT to About, and only when the view
+      // actually changes.
+      if (name !== currentView && name !== 'about') {
+        runCascade(views[name]);
+      }
+      currentView = name;
+      window.scrollTo({ top: 0 });
+    }
+
+    catButtons.forEach(b => {
+      b.addEventListener('click', e => {
+        e.preventDefault();
+        const v = b.dataset.view;
+        setView(v);
+        history.replaceState(null, '', '#' + v);
+      });
+    });
+
+    // Clicking the name wordmark brings the landing curtain back down
+    // -- the curtain before the show reappears over the whole site.
+    const homeLink = document.querySelector('.wordmark a');
+    if (homeLink) {
+      homeLink.addEventListener('click', e => {
+        e.preventDefault();
+        const c = document.getElementById('curtain');
+        if (!c) return;
+        c.style.display = 'flex';
+        void c.offsetWidth;            // force reflow so the fade-in replays
+        c.classList.remove('is-hidden');
+        history.replaceState(null, '', location.pathname + location.search);
+      });
+    }
+
+    // Project clicks. External links (writing placeholders) pass through to
+    // their native behavior; internal projects route to their subpage.
+    const projectSubpages = {
+      'envoys':              'envoys',
+      'recursion':   'recursion',
+      'reefbreaker-bay':     'reefbreaker-bay',
+      'rospo':               'rospo',
+    };
+    projectLinks.forEach(a => {
+      a.addEventListener('click', e => {
+        if (a.dataset.external === 'true') {
+          // Placeholder external link with href="#" — block navigation for now.
+          // When a real URL is set, change href and the browser will follow it.
+          const href = a.getAttribute('href');
+          if (!href || href === '#') e.preventDefault();
+          return;
+        }
+        e.preventDefault();
+        const project = a.dataset.project;
+        const subpage = projectSubpages[project];
+        setView(subpage || 'work');
+        history.replaceState(null, '', '#' + project);
+      });
+    });
+
+    // Tile clicks. External tiles (writing) behave like normal links;
+    // internal tiles route to the matching subpage.
+    document.querySelectorAll('.tile').forEach(t => {
+      t.addEventListener('click', e => {
+        if (t.dataset.external === 'true') {
+          const href = t.getAttribute('href');
+          if (!href || href === '#') e.preventDefault();
+          return;
+        }
+        e.preventDefault();
+        const href = t.getAttribute('href') || '';
+        const slug = href.replace('#', '');
+        const match = document.querySelector('.nav-sub a[data-project="' + slug + '"]');
+        if (match) match.click();
+      });
+    });
+
+    // Tile videos: play on hover, fade back to poster on mouse-leave.
+    // The video element overlays a still poster image; toggling opacity
+    // performs the visual crossfade. We delay the pause+reset until the
+    // opacity transition has had time to hide the video, so the user never
+    // sees a frame-jump back to 0.
+    const VIDEO_FADE_MS = 320;
+    document.querySelectorAll('.tile-has-media').forEach(tile => {
+      const video = tile.querySelector('.tile-video');
+      if (!video) return;
+      let resetTimer = null;
+      tile.addEventListener('mouseenter', () => {
+        clearTimeout(resetTimer);
+        try { video.currentTime = 0; } catch (_) {}
+        const p = video.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      });
+      tile.addEventListener('mouseleave', () => {
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => {
+          video.pause();
+          try { video.currentTime = 0; } catch (_) {}
+        }, VIDEO_FADE_MS);
+      });
+    });
+
+    // Inline-expand contact toggle
+    (function () {
+      const wrap = document.querySelector('.contact-wrap');
+      const btn = wrap && wrap.querySelector('.contact-toggle');
+      if (!wrap || !btn) return;
+      function setOpen(open) {
+        wrap.classList.toggle('is-open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        setOpen(!wrap.classList.contains('is-open'));
+      });
+      // Click anywhere outside folds it back closed
+      document.addEventListener('click', e => {
+        if (!wrap.contains(e.target)) setOpen(false);
+      });
+      // Escape closes it too
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') setOpen(false);
+      });
+    })();
+
+    // Curtain — the landing overlay. Clicking the name lifts it and enters
+    // the Film page. Any deep-link hash skips the curtain entirely.
+    const curtain = document.getElementById('curtain');
+    function liftCurtain() {
+      if (!curtain) return;
+      curtain.classList.add('is-hidden');
+      setTimeout(() => { curtain.style.display = 'none'; }, 800);
+    }
+    const curtainName = document.querySelector('.curtain-name');
+    if (curtainName) {
+      curtainName.addEventListener('click', e => {
+        e.preventDefault();
+        setView('work');
+        history.replaceState(null, '', '#work');
+        liftCurtain();
+      });
+    }
+
+    // Honor hash on load
+    (function () {
+      const h = (location.hash || '').replace('#', '');
+      if (h) {
+        // Deep link — skip the curtain, reveal the site directly.
+        if (curtain) curtain.style.display = 'none';
+        if (views[h]) setView(h);
+        else {
+          const match = document.querySelector('.nav-sub a[data-project="' + h + '"]');
+          if (match) match.click();
+          else setView('work');
+        }
+      } else {
+        // First visit — curtain up, Film staged behind it.
+        setView('work');
+      }
+    })();
+    // ---- Curtain gaze: man & horse heads follow the cursor (desktop only) ----
+    // Each figure has 8 poses: 2 facings x 4 vertical tilts. As the cursor moves,
+    // each figure independently picks the single pose that best aims its gaze at
+    // the cursor and hard-swaps to it (flipbook pop, no transition). Touch / no-
+    // mouse devices never run this, so both stay on the _03 resting pose.
+    (function () {
+      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+      const base = 'assets/drawings/lobby/';
+      const figures = [
+        {
+          el: document.querySelector('.curtain-man'),
+          prefix: 'Man_', suffix: '_cut.png', anchorY: 0.16,
+          // facing 'right' -> 01-04, facing 'left' -> 05-08
+          poses: {
+            right: { up:'01', slightlyUp:'02', straight:'03', down:'04' },
+            left:  { up:'05', slightlyUp:'06', straight:'07', down:'08' }
+          }
+        },
+        {
+          el: document.querySelector('.curtain-horse'),
+          prefix: 'Horse_', suffix: '_cut.png', anchorY: 0.30,
+          // facing 'left' -> 01-04, facing 'right' -> 05-08
+          poses: {
+            left:  { up:'01', slightlyUp:'02', straight:'03', down:'04' },
+            right: { up:'05', slightlyUp:'06', straight:'07', down:'08' }
+          }
+        }
+      ].filter(f => f.el);
+
+      // Preload every pose so the first turn never flashes.
+      figures.forEach(f => Object.values(f.poses).forEach(side =>
+        Object.values(side).forEach(n => { const im = new Image(); im.src = base + f.prefix + n + f.suffix; })));
+
+      // Elevation of the cursor above each figure's eye line, in degrees.
+      function tiltFor(deg) {
+        if (deg >= 30) return 'up';
+        if (deg >= 8)  return 'slightlyUp';
+        if (deg >= -18) return 'straight';
+        return 'down';
+      }
+
+      const current = new WeakMap();
+      function setPose(f, n) {
+        if (current.get(f.el) === n) return;     // already on this pose
+        current.set(f.el, n);
+        f.el.src = base + f.prefix + n + f.suffix;
+      }
+      function update(mx, my) {
+        if (!curtain || curtain.style.display === 'none' || curtain.classList.contains('is-hidden')) return;
+        figures.forEach(f => {
+          const r = f.el.getBoundingClientRect();
+          const ax = r.left + r.width * 0.5;
+          const ay = r.top + r.height * f.anchorY;
+          const side = (mx >= ax) ? 'right' : 'left';
+          const elev = Math.atan2(ay - my, Math.abs(mx - ax)) * 180 / Math.PI;
+          setPose(f, f.poses[side][tiltFor(elev)]);
+        });
+      }
+
+      let raf = 0, lastX = 0, lastY = 0;
+      window.addEventListener('mousemove', e => {
+        lastX = e.clientX; lastY = e.clientY;
+        if (raf) return;
+        raf = requestAnimationFrame(() => { raf = 0; update(lastX, lastY); });
+      });
+      // Cursor leaves the window: settle both back to the _03 resting pose.
+      document.addEventListener('mouseleave', () => figures.forEach(f => setPose(f, '03')));
+    })();
+
+    /* Envoys production stills: no-crop masonry. Set each tile's grid row-span
+       from its rendered image height so tiles pack with no gaps and nothing is
+       cropped. Re-run as each image loads and on resize/breakpoint change. */
+    (function envoysMasonry(){
+      var grid = document.getElementById('envoys-prod-grid');
+      if (!grid) return;
+      function layout(){
+        var cs = getComputedStyle(grid);
+        var rowH = parseFloat(cs.getPropertyValue('grid-auto-rows')) || 8;
+        var gap  = parseFloat(cs.getPropertyValue('row-gap')) || 0;
+        grid.querySelectorAll('.still').forEach(function(it){
+          var img = it.querySelector('img');
+          var h = img ? img.getBoundingClientRect().height : it.getBoundingClientRect().height;
+          if (!h) return;
+          it.style.gridRowEnd = 'span ' + Math.ceil((h + gap) / (rowH + gap));
+        });
+      }
+      grid.querySelectorAll('img').forEach(function(img){
+        if (img.complete && img.naturalHeight) return;
+        img.addEventListener('load', layout);
+        img.addEventListener('error', layout);
+      });
+      window.addEventListener('load', layout);
+      window.addEventListener('resize', layout);
+      layout();
+    })();
+
+    // Photo lightbox: click any still (Envoys/Rospo galleries) to enlarge it
+    // over a dimmed screen; click anywhere outside the photo, or press Esc,
+    // to minimize it back into the layout.
+    (function(){
+      function init(){
+      var box = document.getElementById('lightbox');
+      if (!box) return;
+      var bImg = box.querySelector('img');
+      var clearTimer = null;
+      function sizeImg(){
+        var nw = bImg.naturalWidth, nh = bImg.naturalHeight;
+        if (!nw || !nh) return;
+        var maxW = window.innerWidth * 0.94;
+        var maxH = window.innerHeight * 0.94;
+        var scale = Math.min(maxW / nw, maxH / nh, 2); // fill the screen, but never beyond 2x native resolution
+        bImg.style.width = Math.round(nw * scale) + 'px';
+        bImg.style.height = Math.round(nh * scale) + 'px';
+      }
+      function openBox(src, alt){
+        if (clearTimer) { clearTimeout(clearTimer); clearTimer = null; }
+        bImg.style.width = ''; bImg.style.height = '';
+        bImg.src = src; bImg.alt = alt || '';
+        if (bImg.complete && bImg.naturalWidth) sizeImg();
+        else bImg.onload = sizeImg;
+        box.classList.add('open');
+        box.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeBox(){
+        box.classList.remove('open');
+        box.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        clearTimer = setTimeout(function(){ bImg.src = ''; bImg.style.width = ''; bImg.style.height = ''; }, 340);
+      }
+      document.addEventListener('click', function(e){
+        var img = e.target.closest && e.target.closest('.still img');
+        if (img) { e.preventDefault(); openBox(img.currentSrc || img.src, img.alt); }
+      });
+      box.addEventListener('click', function(e){
+        if (e.target !== bImg) closeBox();
+      });
+      window.addEventListener('resize', function(){
+        if (box.classList.contains('open')) sizeImg();
+      });
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape' && box.classList.contains('open')) closeBox();
+      });
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
+    })();
+
+  </script>
+  <div id="lightbox" aria-hidden="true"><img src="" alt=""></div>
+  <script>
+    // Route in-text About links through the existing nav router.
+    document.querySelectorAll('.about-link').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        var route = a.dataset.route || '';
+        if (route.indexOf('project:') === 0) {
+          var slug = route.slice(8);
+          var m = document.querySelector('.nav-sub a[data-project="' + slug + '"]');
+          if (m) m.click();
+        } else if (route.indexOf('view:') === 0) {
+          var v = route.slice(5);
+          var b = document.querySelector('.nav-cat[data-view="' + v + '"]');
+          if (b) b.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
