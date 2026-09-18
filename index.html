@@ -1259,8 +1259,8 @@
         <div class="nav-group">
           <button class="nav-cat" data-view="work">Film</button>
           <ul class="nav-sub">
-            <li><a href="#envoys" data-project="envoys">Envoys</a></li>
             <li><a href="#recursion" data-project="recursion">Recursion</a></li>
+            <li><a href="#envoys" data-project="envoys">Envoys</a></li>
             <li><a href="#reefbreaker-bay" data-project="reefbreaker-bay">Reefbreaker Bay</a></li>
             <li><a href="#rospo" data-project="rospo">Rospo</a></li>
           </ul>
@@ -1296,18 +1296,6 @@
         <p class="view-head" id="work-head">Film</p>
         <div class="grid">
 
-          <a class="tile tile-has-media" href="#envoys" aria-label="Envoys — feature film, 65 minutes, 2026">
-            <div class="tile-hero" aria-hidden="true"></div>
-            <img class="tile-poster" src="assets/posters/envoys_web_poster.jpg" alt="" aria-hidden="true">
-            <video class="tile-video" src="assets/videos/envoys_web.mp4"
-                   muted loop playsinline preload="metadata" aria-hidden="true"></video>
-            <div class="tile-scrim" aria-hidden="true"></div>
-            <div class="tile-text">
-              <h2 class="tile-title">Envoys</h2>
-              <p class="tile-meta">Feature Film — 65 min — 2026</p>
-            </div>
-          </a>
-
           <a class="tile tile-has-media" href="#recursion" aria-label="Recursion — horror feature, in development">
             <div class="tile-hero" aria-hidden="true"></div>
             <img class="tile-poster" src="assets/posters/recursion_web_poster.jpg" alt="" aria-hidden="true">
@@ -1317,6 +1305,18 @@
             <div class="tile-text">
               <h2 class="tile-title">Recursion</h2>
               <p class="tile-meta">Horror Feature — In Development</p>
+            </div>
+          </a>
+
+          <a class="tile tile-has-media" href="#envoys" aria-label="Envoys — feature film, 65 minutes, 2026">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-poster" src="assets/posters/envoys_web_poster.jpg" alt="" aria-hidden="true">
+            <video class="tile-video" src="assets/videos/envoys_web.mp4"
+                   muted loop playsinline preload="metadata" aria-hidden="true"></video>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <div class="tile-text">
+              <h2 class="tile-title">Envoys</h2>
+              <p class="tile-meta">Feature Film — 65 min — 2026</p>
             </div>
           </a>
 
@@ -1548,8 +1548,14 @@
           <p class="subpage-meta">Horror Feature — In Development</p>
         </header>
 
-        <div class="subpage-media-slot" aria-label="Primary media — Recursion concept visual">
-          <img src="assets/recursion/Recursion%20placeholder.png" alt="Recursion — concept visual" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div class="subpage-trailer">
+          <iframe
+            src="https://www.youtube.com/embed/QSsm9fzxSOM"
+            title="Recursion — short film"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+            loading="lazy"></iframe>
         </div>
 
         <section class="subpage-section subpage-section-prose" aria-label="Logline">
