@@ -635,6 +635,13 @@
       pointer-events: none;
       opacity: 0.92;
     }
+    /* The Higgsfield crest is much wider than the existing vertical laurels.
+       Let width drive its size so the shared award slot does not stretch it. */
+    .tile-award .tile-laurel.tile-laurel-wide {
+      width: 132px;
+      height: auto;
+      max-height: calc(100% - 16px);
+    }
 
     /* Stills grids — magnification on hover (same scale/feel as Film tile bulge). */
     .stills-grid {
@@ -1577,7 +1584,7 @@
             <p>The short is an official entry in the 2026 Higgsfield Global Film Festival, a worldwide competition for AI short films in any story or genre. The festival has a $1 million prize pool and an industry jury drawn from film and animation.</p>
           </div>
           <div class="grid">
-            <a class="tile tile-half tile-press"
+            <a class="tile tile-half tile-award"
                href="https://higgsfield.ai/@souleborne/projects/recursion"
                data-external="true" target="_blank" rel="noopener"
                aria-label="Official Entry — Higgsfield Global Film Festival, 2026">
@@ -1586,7 +1593,9 @@
                 <h3 class="tile-title">Official Entry</h3>
                 <p class="tile-meta">Higgsfield Global Film Festival — 2026</p>
               </div>
-              <span class="tile-review-cta" aria-hidden="true">View the full project&hellip;</span>
+              <img class="tile-laurel tile-laurel-wide"
+                   src="assets/recursion/higgsfield_global_film_festival_crest.png"
+                   alt="" aria-hidden="true">
             </a>
           </div>
         </section>
