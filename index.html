@@ -504,6 +504,11 @@
       width: 100%; height: 100%;
       border: 0; display: block;
     }
+    /* Envoys media hierarchy: the eventual feature is primary, followed by
+       the existing trailer. Each block can be swapped independently. */
+    .subpage-screening { margin-bottom: 56px; }
+    .subpage-screening .subpage-media-slot,
+    .subpage-screening .subpage-trailer { margin-bottom: 0; }
 
     /* Body prose for description paragraphs. Larger and more readable than
        the placeholder slot text used previously. */
@@ -787,6 +792,7 @@
       .tile-award .tile-text { right: 90px; }
       .tile-award .tile-laurel { max-width: 76px; right: 10px; }
       .subpage-trailer { margin-bottom: 36px; }
+      .subpage-screening { margin-bottom: 36px; }
     }
 
     /* About view */
@@ -1437,19 +1443,29 @@
           <p class="subpage-meta">Feature Film — 65 min — 2026</p>
         </header>
 
-        <div class="subpage-trailer">
-          <iframe
-            src="https://player.vimeo.com/video/1197848392?title=0&byline=0&portrait=0"
-            title="Envoys — trailer"
-            allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-            allowfullscreen
-            loading="lazy"></iframe>
-        </div>
+        <section class="subpage-section subpage-section-wide subpage-screening" aria-labelledby="envoys-feature-film">
+          <h2 class="subpage-section-head" id="envoys-feature-film">Feature Film</h2>
+          <div class="subpage-media-slot" aria-label="Envoys feature film — coming soon">
+            <p class="slot-text">Coming Soon</p>
+          </div>
+        </section>
+
+        <section class="subpage-section subpage-section-wide subpage-screening" aria-labelledby="envoys-trailer">
+          <h2 class="subpage-section-head" id="envoys-trailer">Trailer</h2>
+          <div class="subpage-trailer">
+            <iframe
+              src="https://player.vimeo.com/video/1197848392?title=0&byline=0&portrait=0"
+              title="Envoys — trailer"
+              allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+              allowfullscreen
+              loading="lazy"></iframe>
+          </div>
+        </section>
 
         <section class="subpage-section subpage-section-prose" aria-label="Description">
           <div class="subpage-prose">
             <p>In the aftermath of a second American civil war, two coalition envoys are sent to a remote rebel encampment to deliver a ceasefire ultimatum to its reclusive, fanatical commander.</p>
-            <p>Shot on a budget of $9,800, with a completely first-time cast and crew, <em>Envoys</em> is my attempt to raise the bar for what a student film can be. It is the first feature-length student film to be made at Middlebury College, and the first narrative thesis film made completely outside of the college's film department (in protestation of a 15-minute runtime rule).</p>
+            <p>Shot on a budget of $9,800, with a completely first-time cast and crew, <em>Envoys</em> was conceived as an effort to raise the bar for what a student film can be. It is the first feature-length student film to be made at Middlebury College, and the first narrative thesis film made completely outside of the college's film department (in protestation of a 15-minute runtime rule).</p>
           </div>
         </section>
 
@@ -1641,7 +1657,7 @@
 
         <section class="subpage-section subpage-section-prose" aria-label="Description">
           <div class="subpage-prose">
-            <p>Written for and produced in the Hepburn Zoo student theater at Middlebury College, <em>Rospo</em> is my theatrical directing debut and my first full-length narrative production. It was an entirely student-organized production — we even built the boat. <em>Rospo</em> sold out all three performances, not in small part from a guerrilla marketing campaign: over a thousand toad stickers hidden around the Middlebury campus&hellip; four years later, some still remain.</p>
+            <p>Written for and produced in the Hepburn Zoo student theater at Middlebury College, <em>Rospo</em> was an entirely student-organized three-act production and marked a theatrical directing debut and first full-length narrative production&mdash;even the boat was built by the company. <em>Rospo</em> sold out all three performances, not in small part from a guerrilla marketing campaign: over a thousand toad stickers hidden around the Middlebury campus&hellip; four years later, some still remain.</p>
           </div>
         </section>
 
