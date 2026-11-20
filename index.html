@@ -525,6 +525,7 @@
     }
     .subpage-prose p:last-child { margin-bottom: 0; }
     .subpage-prose em { font-style: italic; }
+    #view-leanland [aria-label="Project overview"] a { text-decoration: underline; text-underline-offset: 0.15em; }
 
     /* Cast section: label + names on the same line, two stacked lines.
        The label is the small uppercase tracking-out treatment used elsewhere. */
@@ -679,6 +680,8 @@
     .stills-film .still { aspect-ratio: 16 / 9; }
     .stills-film .still { background: transparent; border: none; }
     .stills-film .still:hover { border-color: transparent; box-shadow: none; }
+    #recursion-film-gallery .still { display: block; cursor: zoom-in; }
+    #recursion-film-gallery .still > img { display: block; width: 100%; height: 100%; object-fit: contain; }
 
     /* Rospo stills: assorted mosaic — landscape + portrait tiles only, no
        extreme aspect ratios. Dense packing across 6 columns tiles cleanly. */
@@ -1226,6 +1229,300 @@
       transition: transform 320ms cubic-bezier(0.2,0.8,0.2,1), opacity 260ms ease;
     }
     #lightbox.open img { transform: scale(1); opacity: 1; }
+
+    /* ---------- AI portfolio timeline ---------- */
+    .ai-intro {
+      margin: 0 0 44px;
+      max-width: 42rem;
+    }
+    .ai-intro p { margin: 0; }
+    .ai-intro .ai-statement-label { margin-bottom: 8px; color: var(--ink-muted); font: 400 italic 0.875rem 'Newsreader', serif; }
+    .ai-timeline { display: grid; gap: 20px; max-width: var(--content-max); }
+    .ai-entry {
+      display: grid;
+      grid-template-columns: minmax(8rem, 22%) minmax(0, 1fr);
+      column-gap: clamp(16px, 2.1vw, 30px);
+      align-items: start;
+      min-width: 0;
+    }
+    .ai-context { padding: 8px 0 0; min-width: 0; text-align: right; }
+    .ai-context:has(.ai-year) { padding-top: 0; }
+    @media (min-width: 601px) {
+      .ai-context { align-self: stretch; display: flex; flex-direction: column; }
+      .ai-entry:has(.ai-quote) { row-gap: 8px; }
+      .ai-entry:has(.ai-quote) > .ai-context { grid-area: 1 / 1 / span 2; }
+      .ai-entry > .ai-quote { grid-area: 2 / 2; }
+      .ai-entry:not(:last-child) .ai-context::after {
+        content: "";
+        flex: 1;
+        width: 4px;
+        min-height: 0;
+        align-self: flex-end;
+        margin: 10px 14px -15px 0;
+        background: radial-gradient(circle, var(--ink-faint) 1px, transparent 1.4px)
+                    center top / 4px 9px repeat-y;
+        pointer-events: none;
+      }
+    }
+    .ai-year {
+      margin: 0 0 7px;
+      color: var(--ink-muted);
+      font: 700 italic 0.875rem 'Newsreader', serif;
+      letter-spacing: 0.075em;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .ai-caption {
+      margin: 0;
+      color: var(--ink-muted);
+      font: 400 0.875rem/1.4 'Newsreader', serif;
+    }
+    .ai-entry .tile:not(.tile-half) { min-height: 108px; }
+    .ai-entry .tile-half { min-height: 72px; }
+    #envoys-ai-use { scroll-margin-top: 6rem; }
+    .ai-quote {
+      min-width: 0;
+      margin: 0;
+      padding-inline: 2px;
+      color: var(--ink-soft);
+      font: 400 italic 0.9375rem/1.45 'Newsreader', serif;
+    }
+    .ai-entry .tile-half .tile-text { top: 50%; bottom: auto; left: 111px; right: 12px; transform: translateY(-50%); }
+    .ai-entry .tile-half .tile-meta { margin: 4px 0 0; }
+    .ai-entry .tile-drawing { left: 14px; width: 82px; height: 54px; }
+    .ai-back { display: inline-block; margin-bottom: 24px; color: var(--ink-muted); }
+    .ai-back:hover, .ai-back:focus-visible { color: var(--ink); }
+    .lean-lab-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px 16px;
+    }
+    .lean-lab-gallery figure { margin: 0; min-width: 0; }
+    .lean-lab-gallery img { display: block; width: 100%; height: auto; }
+    .lean-lab-gallery figcaption { margin-top: 7px; }
+    .lean-section { scroll-margin-top: 28px; }
+    .lean-section:focus { outline: none; }
+    .lean-index {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 18px;
+      padding: 12px 0;
+      margin: 0 0 32px;
+      border-block: 1px solid var(--rule);
+    }
+    .lean-index button, .lean-carousel-actions button {
+      color: var(--ink-soft);
+      font: 400 0.875rem 'Newsreader', serif;
+      padding: 6px 0;
+    }
+    .lean-index button:hover, .lean-carousel-actions button:hover {
+      text-decoration: underline;
+      text-underline-offset: 0.18em;
+    }
+    .lean-lab-gallery a { display: block; }
+    .lean-lab-gallery a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .lean-lab-gallery figcaption {
+      color: var(--ink-soft);
+      font: 400 0.875rem/1.35 'Newsreader', serif;
+    }
+    .lean-lab-gallery figcaption small { display: block; color: var(--ink-muted); font-size: 0.8rem; margin-top: 3px; }
+    .lean-mosaic { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px 10px; }
+    .lean-mosaic img { aspect-ratio: 1; object-fit: contain; background: var(--bg-tile); }
+    .lean-lab-gallery:not(.lean-mosaic) figure a {
+      display: grid;
+      align-items: center;
+      aspect-ratio: 4 / 3;
+      background: var(--bg-tile);
+    }
+    .lean-lab-gallery:not(.lean-mosaic) figure img { width: 100%; height: 100%; max-height: 100%; object-fit: contain; }
+    .lean-lab-gallery.lean-studies {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-flow: dense;
+      gap: 12px;
+    }
+    .lean-studies figure { position: relative; }
+    .lean-studies figure.lean-panorama { grid-column: span 2; }
+    .lean-lab-gallery.lean-studies figure a { display: block; aspect-ratio: 5 / 4; overflow: hidden; }
+    .lean-lab-gallery.lean-studies figure.lean-panorama a { aspect-ratio: 5 / 2; }
+    .lean-lab-gallery.lean-studies figure.lean-panorama img { object-fit: cover; }
+    .lean-lab-gallery.lean-studies figure.lean-square a { aspect-ratio: 1; }
+    .lean-lab-gallery.lean-studies figure.lean-square img { object-fit: contain; }
+    .lean-lab-gallery.lean-sipstein-carousel {
+      display: flex;
+      gap: 18px;
+      padding-bottom: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+    }
+    .lean-sipstein-carousel figure { flex: 0 0 clamp(195px, 46%, 460px); scroll-snap-align: start; }
+    .lean-lab-gallery.lean-sipstein-carousel figure a { background: transparent; aspect-ratio: 4 / 3; }
+    .lean-sipstein-carousel figcaption { text-align: center; }
+    @media (max-width: 600px) { .lean-sipstein-carousel figure { flex-basis: 79%; } }
+    #lean-merch .lean-lab-gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .lean-studies figcaption {
+      position: absolute;
+      inset: auto 0 0;
+      margin: 0;
+      padding: 18px 9px 8px;
+      color: #fafaf7;
+      background: linear-gradient(transparent, rgb(17 14 12 / 0.92));
+      opacity: 0;
+      transition: opacity 160ms ease;
+      pointer-events: none;
+    }
+    .lean-studies figcaption small { color: #efe9df; }
+    .lean-studies figure:hover figcaption, .lean-studies figure:focus-within figcaption { opacity: 1; }
+    @media (hover: none) { .lean-studies figcaption { opacity: 1; } }
+    .lean-lab-gallery.lean-printouts {
+      max-width: 625px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px 10px;
+    }
+    .lean-lab-gallery.lean-printouts figure a { aspect-ratio: 3 / 4; }
+    .lean-lab-gallery.lean-printouts figcaption { font-size: 0.8125rem; }
+    .lean-carousel-actions { display: flex; justify-content: flex-end; gap: 18px; margin-bottom: 6px; }
+    .lean-lab-gallery.lean-carousel {
+      display: flex;
+      align-items: flex-start;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 14px;
+      padding: 0 0 12px;
+    }
+    .lean-letter { position: relative; flex: 0 0 clamp(145px, 34%, 280px); min-width: 0; scroll-snap-align: start; }
+    .lean-lab-gallery.lean-carousel .lean-letter a {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      aspect-ratio: 8.5 / 11;
+      background: #f7f4ee;
+    }
+    .lean-carousel .lean-letter img { width: 100%; height: 100%; object-fit: contain; }
+    .lean-letter figcaption {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    @media (max-width: 767px) { .lean-section { scroll-margin-top: 110px; } }
+    @media (max-width: 600px) {
+      .lean-lab-gallery.lean-studies { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .lean-lab-gallery.lean-printouts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .lean-mosaic { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    .marble-watch { margin: 0 0 20px; }
+    .marble-watch a { text-decoration: underline; text-underline-offset: 0.15em; }
+    #view-marble-lake .subpage-trailer { margin-bottom: 12px; }
+    .marble-parts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(16px, 3vw, 36px);
+    }
+    .marble-parts > .subpage-section { min-width: 0; }
+    .olaf-hero { margin: 0 0 28px; max-width: 700px; }
+    .olaf-hero img { display: block; width: 100%; height: auto; }
+    @media (max-width: 600px) { .marble-parts { grid-template-columns: minmax(0, 1fr); } }
+    @media (max-width: 950px) {
+      .ai-entry .tile-drawing { left: 10px; width: 56px; height: 48px; }
+      .ai-entry .tile-half .tile-text { left: 77px; }
+    }
+    @media (max-width: 767px) {
+      .ai-intro { margin-bottom: 30px; }
+    }
+    @media (max-width: 600px) {
+      .ai-entry {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: 22px auto auto;
+        row-gap: 7px;
+      }
+      .ai-context { display: contents; }
+      .ai-entry > .tile { grid-area: 2 / 1; }
+      .ai-context > .ai-year { grid-area: 1 / 1; margin: 0; text-align: left; }
+      .ai-context > .ai-caption { grid-area: 3 / 1; text-align: left; }
+      .ai-entry > .ai-quote { grid-area: 4 / 1; padding-inline: 0; }
+      .ai-entry .tile:not(.tile-half) { min-height: 104px; }
+    }
+
+    .envoys-lookbooks {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      max-width: var(--content-max);
+      margin-top: 16px;
+    }
+    .envoys-lookbook h3, .envoys-reader-title {
+      margin: 0 0 8px;
+      font: 500 1rem/1.25 'Newsreader', serif;
+    }
+    .envoys-lookbook h3 small {
+      color: var(--ink-muted);
+      font-weight: 400;
+      margin-inline-start: 5px;
+    }
+    .envoys-lookbook-pages {
+      box-sizing: border-box;
+      aspect-ratio: 16 / 10;
+      overflow-y: auto;
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
+      border: 1px solid var(--rule);
+      background: var(--bg-tile);
+    }
+    .envoys-lookbook-pages a { display: block; cursor: zoom-in; }
+    .envoys-lookbook-pages a + a { margin-top: 7px; }
+    .envoys-lookbook-pages img, .envoys-reader-pages img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+    }
+    .envoys-lookbook-pages a:focus-visible { outline-offset: -3px; }
+    .envoys-lookbook-hint {
+      margin: 10px 0 0;
+      color: var(--ink-muted);
+      font: italic 0.875rem/1.4 'Newsreader', serif;
+    }
+    @media (max-width: 600px) {
+      .envoys-lookbooks { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    }
+    .envoys-reader {
+      padding: 0;
+      border: 0;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      max-height: none;
+      background: #14130f;
+      color: #eee8dc;
+    }
+    .envoys-reader[open] { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+    .envoys-reader::backdrop { background: #14130f; }
+    .envoys-reader-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px clamp(12px, 3vw, 36px);
+      border-bottom: 1px solid #3a352d;
+    }
+    .envoys-reader-title { margin: 0; }
+    .envoys-reader-close {
+      flex: none;
+      border: 1px solid #847b6a;
+      border-radius: 3px;
+      background: transparent;
+      color: inherit;
+      padding: 7px 12px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .envoys-reader-pages { overflow: auto; overscroll-behavior: contain; padding: 12px; }
+    .envoys-reader-pages figure { max-width: 1600px; margin: 0 auto 12px; }
+    .envoys-reader-pages figure:last-child { margin-bottom: 0; }
   </style>
 </head>
 <body>
@@ -1272,6 +1569,7 @@
         <div class="nav-group">
           <button class="nav-cat" data-view="work">Film</button>
           <ul class="nav-sub">
+            <li><a href="#olaf-the-lunatic" data-project="olaf-the-lunatic">Olaf, the Lunatic</a></li>
             <li><a href="#recursion" data-project="recursion">Recursion</a></li>
             <li><a href="#envoys" data-project="envoys">Envoys</a></li>
             <li><a href="#reefbreaker-bay" data-project="reefbreaker-bay">Reefbreaker Bay</a></li>
@@ -1284,6 +1582,10 @@
           <!-- Writing intentionally has no nested list; the tiles live only in
                the Writing view. They go to external destinations rather than
                internal subpages, so a sidebar index is redundant. -->
+        </div>
+
+        <div class="nav-group">
+          <button class="nav-cat" data-view="ai">AI</button>
         </div>
 
       </nav>
@@ -1308,6 +1610,16 @@
       <section class="view is-active" id="view-work" aria-labelledby="work-head">
         <p class="view-head" id="work-head">Film</p>
         <div class="grid">
+
+          <a class="tile tile-has-media" href="#olaf-the-lunatic" aria-label="Olaf, the Lunatic, AI short, in development, 2027">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-poster" src="assets/olaf-the-lunatic/ancestral-tree.jpg" alt="" aria-hidden="true">
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <div class="tile-text">
+              <h2 class="tile-title">Olaf, the Lunatic</h2>
+              <p class="tile-meta">AI Short — In Development — 2027</p>
+            </div>
+          </a>
 
           <a class="tile tile-has-media" href="#recursion" aria-label="Recursion — AI short, feature in development, 2026">
             <div class="tile-hero" aria-hidden="true"></div>
@@ -1419,6 +1731,130 @@
             </div>
           </a>
 
+        </div>
+      </section>
+
+      <section class="view" id="view-ai" aria-labelledby="ai-head">
+        <header class="subpage-head">
+          <h1 class="subpage-title" id="ai-head">AI</h1>
+        </header>
+        <div class="subpage-prose ai-intro">
+          <p class="ai-statement-label">Current Statement on AI - Nov 2026</p>
+          <p>I strongly believe that AI is the primary intellectual issue of our time. It directly challenges how we think about ethics and philosophy, how we understand consciousness and the human condition, and how we make and experience art. Since 2023, I've been writing, thinking about, and using AI tools to the end of meeting this challenge. While filmmaking is my vocation, I am de facto interested in all facets of AI.<br>Currently, I am working on how, if at all, AI can be integrated into filmmaking today.</p>
+        </div>
+        <div class="ai-timeline">
+            <div class="ai-entry">
+              <div class="ai-context">
+                <p class="ai-year">2027</p>
+                <p class="ai-caption">Film in development</p>
+              </div>
+              <a class="tile tile-has-media" href="#olaf-the-lunatic" aria-label="Olaf, the Lunatic, AI short, in development, 2027">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-poster" src="assets/olaf-the-lunatic/ancestral-tree.jpg" alt="" aria-hidden="true">
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <div class="tile-text">
+              <h2 class="tile-title">Olaf, the Lunatic</h2>
+              <p class="tile-meta">AI Short · In Development · 2027</p>
+            </div>
+          </a>
+            </div>
+            <div class="ai-entry">
+              <div class="ai-context">
+                <p class="ai-year">2026</p>
+                <p class="ai-caption">Found footage realism visual study</p>
+              </div>
+              <a class="tile tile-has-media" href="#marble-lake" aria-label="Marble Lake, AI Camcorder Realism Test, 2026">
+              <div class="tile-hero" aria-hidden="true"></div>
+              <img class="tile-poster" src="assets/marble-lake/dumpster-poster.jpg" alt="" aria-hidden="true">
+            <video class="tile-video" src="assets/marble-lake/dumpster-loop.mp4"
+                   muted loop playsinline preload="metadata" aria-hidden="true"></video>
+              <div class="tile-scrim" aria-hidden="true"></div>
+              <div class="tile-text">
+                <h2 class="tile-title">Marble Lake</h2>
+                <p class="tile-meta">AI Camcorder Realism Test · 2026</p>
+              </div>
+            </a>
+            </div>
+            <div class="ai-entry">
+              <div class="ai-context">
+                <p class="ai-caption">A science-fiction short set inside an accelerator lab.</p>
+              </div>
+              <a class="tile tile-has-media" href="#recursion" aria-label="Recursion — AI short, feature in development, 2026">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-poster" src="assets/posters/recursion_web_poster.jpg" alt="" aria-hidden="true">
+            <video class="tile-video" src="assets/videos/recursion_web.mp4"
+                   muted loop playsinline preload="metadata" aria-hidden="true"></video>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <div class="tile-text">
+              <h2 class="tile-title">Recursion</h2>
+              <p class="tile-meta">AI Short · Feature in Development · 2026</p>
+            </div>
+          </a>
+            </div>
+            <div class="ai-entry">
+              <div class="ai-context">
+                <p class="ai-year">2025</p>
+                <p class="ai-caption">Revised stances on macro issues</p>
+              </div>
+              <a class="tile tile-half" href="https://www.middleburycampus.com/article/2025/09/ai-revisited" data-external="true" data-project="ai-revisited" target="_blank" rel="noopener" aria-label="AI Revisited — Opinion — September 2025">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-drawing" src="assets/drawings/writing/ai_revisited_ink.png" alt="" aria-hidden="true">
+            <div class="tile-text">
+              <h2 class="tile-title">AI Revisited</h2>
+              <p class="tile-meta">Opinion · September 2025</p>
+            </div>
+          </a>
+              <blockquote class="ai-quote" cite="https://www.middleburycampus.com/article/2025/09/ai-revisited">“to ignore [the consequences] in earnest demonstrates a state of total obstinance, […] so neglectful to the affairs of the human race it could be considered misanthropic.”</blockquote>
+            </div>
+            <div class="ai-entry">
+              <div class="ai-context">
+                <p class="ai-year">2024</p>
+                <p class="ai-caption">AI in pre-production</p>
+              </div>
+              <a class="tile tile-has-media" href="#envoys-ai-use" aria-label="Envoys, AI in pre-production, August to December 2024">
+                <div class="tile-hero" aria-hidden="true"></div>
+                <img class="tile-poster" src="assets/posters/envoys_web_poster.jpg" alt="" aria-hidden="true">
+                <video class="tile-video" src="assets/videos/envoys_web.mp4"
+                       muted loop playsinline preload="metadata" aria-hidden="true"></video>
+                <div class="tile-scrim" aria-hidden="true"></div>
+                <div class="tile-text">
+                  <h2 class="tile-title">Envoys</h2>
+                  <p class="tile-meta">Pre-production · August to December 2024</p>
+                </div>
+              </a>
+            </div>
+
+
+            <div class="ai-entry">
+              <div class="ai-context">
+                <p class="ai-caption">Stance on AI and academia</p>
+              </div>
+              <a class="tile tile-half" href="https://www.middleburycampus.com/article/2024/05/ai-academia-on-deaths-door" data-external="true" data-project="ai-academia-on-deaths-door" target="_blank" rel="noopener" aria-label="AI: Academia on death's door — Opinion — May 2024">
+            <div class="tile-hero" aria-hidden="true"></div>
+            <img class="tile-drawing" src="assets/drawings/writing/ai_academia_ink.png" alt="" aria-hidden="true">
+            <div class="tile-text">
+              <h2 class="tile-title">AI: Academia on death's door</h2>
+              <p class="tile-meta">Opinion · May 2024</p>
+            </div>
+          </a>
+              <blockquote class="ai-quote" cite="https://www.middleburycampus.com/article/2024/05/ai-academia-on-deaths-door">“To say that a task is impossible for an AI […] is baseless and a unique conceit of human self-importance.”</blockquote>
+            </div>
+
+            <div class="ai-entry">
+              <div class="ai-context">
+                <p class="ai-year">2023</p>
+                <p class="ai-caption">Early AI use in an art installation</p>
+              </div>
+              <a class="tile tile-has-media" href="#leanland" aria-label="Lean Lab, Leanland art installation and party, 2023">
+                <div class="tile-hero" aria-hidden="true"></div>
+                <img class="tile-poster" src="assets/lean-lab/lab-concept.jpg" alt="" aria-hidden="true">
+                <div class="tile-scrim" aria-hidden="true"></div>
+                <div class="tile-text">
+                  <h2 class="tile-title">Lean Lab</h2>
+                  <p class="tile-meta">Leanland · 2023</p>
+                </div>
+              </a>
+            </div>
         </div>
       </section>
 
@@ -1564,6 +2000,164 @@
           </div>
         </section>
 
+        <section class="subpage-section subpage-section-wide" aria-labelledby="envoys-ai-use">
+          <h2 class="subpage-section-head" id="envoys-ai-use" tabindex="-1">AI Use in Pre-production</h2>
+          <div class="subpage-prose">
+            <p>Before shooting <em>Envoys</em> in January 2025, we used Midjourney AI photo generation for pre-visualization and concept art, including images for the film’s lookbooks.</p>
+          </div>
+          <div class="envoys-lookbooks">
+            <div class="envoys-lookbook" data-lookbook="set">
+              <h3 id="lookbook-set-head">Set Lookbook <small aria-hidden="true">· 11 pages</small></h3>
+              <div class="envoys-lookbook-pages" role="region" aria-labelledby="lookbook-set-head" tabindex="0">
+                <a href="assets/envoys/lookbooks/set/page-01.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/set/page-01.jpg" width="1920" height="1080" alt="Page 1: Cover" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/set/page-02.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/set/page-02.jpg" width="1920" height="1080" alt="Page 2: Exteriors overview" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/set/page-03.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/set/page-03.jpg" width="1920" height="1080" alt="Page 3: Main sanctum tent" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/set/page-04.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/set/page-04.jpg" width="1920" height="1080" alt="Page 4: Surrounding tents" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/set/page-05.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/set/page-05.jpg" width="1920" height="1080" alt="Page 5: The Ring" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/set/page-06.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/set/page-06.jpg" width="1920" height="1080" alt="Page 6: Kurtz’s palanquin" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/set/page-07.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/set/page-07.jpg" width="1920" height="1080" alt="Page 7: Prison cells" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/set/page-08.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/set/page-08.jpg" width="1920" height="1080" alt="Page 8: Interiors overview" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/set/page-09.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/set/page-09.jpg" width="1920" height="1080" alt="Page 9: Receptacle tent" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/set/page-10.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/set/page-10.jpg" width="1920" height="1080" alt="Page 10: Sanctum tent" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/set/page-11.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/set/page-11.jpg" width="1920" height="1080" alt="Page 11: Kurtz’s tent" loading="lazy" decoding="async"></a>
+              </div>
+            </div>
+            <div class="envoys-lookbook" data-lookbook="costume">
+              <h3 id="lookbook-costume-head">Costume Lookbook <small aria-hidden="true">· 8 pages</small></h3>
+              <div class="envoys-lookbook-pages" role="region" aria-labelledby="lookbook-costume-head" tabindex="0">
+                <a href="assets/envoys/lookbooks/costume/page-01.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/costume/page-01.jpg" width="1920" height="1080" alt="Page 1: Cover" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/costume/page-02.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/costume/page-02.jpg" width="1920" height="1080" alt="Page 2: Kirri" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/costume/page-03.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/costume/page-03.jpg" width="1920" height="1080" alt="Page 3: Acolytes" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/costume/page-04.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/costume/page-04.jpg" width="1920" height="1080" alt="Page 4: Stinger" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/costume/page-05.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/costume/page-05.jpg" width="1920" height="1080" alt="Page 5: Oblate" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/costume/page-06.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/costume/page-06.jpg" width="1920" height="1080" alt="Page 6: Vance and Coraline" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/costume/page-07.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/costume/page-07.jpg" width="1920" height="1080" alt="Page 7: Chorale and Ring Attendant" loading="lazy" decoding="async"></a>
+                <a href="assets/envoys/lookbooks/costume/page-08.jpg" data-lookbook-page><img src="assets/envoys/lookbooks/costume/page-08.jpg" width="1920" height="1080" alt="Page 8: Kurtz" loading="lazy" decoding="async"></a>
+              </div>
+            </div>
+          </div>
+          <p class="envoys-lookbook-hint">Scroll through either book. Select a page to open it full-screen.</p>
+        </section>
+
+      </section>
+
+
+      <section class="view" id="view-marble-lake" aria-labelledby="marble-lake-head">
+        <a class="ai-back" href="#ai">← AI</a>
+        <header class="subpage-head">
+          <h1 class="subpage-title" id="marble-lake-head">Marble Lake</h1>
+          <p class="subpage-meta">Camcorder Realism Tests · 2026</p>
+        </header>
+        <section class="subpage-section subpage-section-prose" aria-label="Project overview">
+          <div class="subpage-prose">
+            <p>Most AI-generated media is ungrounded or fantastical in premise and scope. Marble Lake is a visual study to the opposite effect. Here I tried to create a deliberately slow and candid tone to the video. The ’90s camcorder aesthetic enhances the realism by compressing detail.</p>
+          </div>
+        </section>
+        <div class="marble-parts">
+          <section class="subpage-section subpage-section-wide" aria-labelledby="marble-part-one">
+            <h2 class="subpage-section-head" id="marble-part-one">Part One</h2>
+            <div class="subpage-trailer">
+              <iframe src="https://www.youtube.com/embed/mwMlb_iQZBg"
+                      title="Marble Lake, Part One"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <p class="marble-watch ai-caption">October 2026 · 5:14 · <a href="https://www.youtube.com/watch?v=mwMlb_iQZBg" target="_blank" rel="noopener">Watch on YouTube ↗</a></p>
+            <div class="subpage-prose marble-watch"><p>The first study: four friends on a camping trip. Experimenting with a one-shot voice-to-video workflow; over half these shots were created from simply speaking out loud.</p></div>
+          </section>
+          <section class="subpage-section subpage-section-wide" aria-labelledby="marble-part-two">
+            <h2 class="subpage-section-head" id="marble-part-two">Part Two</h2>
+            <div class="subpage-trailer">
+              <iframe src="https://www.youtube.com/embed/bMgjiVcGghI"
+                      title="Marble Lake, Part Two"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <p class="marble-watch ai-caption">November 2026 · 6:36 · <a href="https://www.youtube.com/watch?v=bMgjiVcGghI" target="_blank" rel="noopener">Watch on YouTube ↗</a></p>
+            <div class="subpage-prose marble-watch"><p>The second study: pushing into found-footage horror; testing first-person Blender POV blockouts, night mode, and more complex blocking and spatial description in video generation.</p></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="view-olaf-the-lunatic" aria-labelledby="olaf-the-lunatic-head">
+        <header class="subpage-head">
+          <h1 class="subpage-title" id="olaf-the-lunatic-head">Olaf, the Lunatic</h1>
+          <p class="subpage-meta">In Development · 2027</p>
+        </header>
+        <figure class="olaf-hero">
+          <img src="assets/olaf-the-lunatic/ancestral-tree.jpg" width="1200" height="1200" alt="The ancestral tree in a snow-dusted castle courtyard" loading="lazy">
+        </figure>
+        <div class="subpage-prose"><p>Project details to come.</p></div>
+      </section>
+
+      <section class="view" id="view-leanland" aria-labelledby="leanland-head">
+        <a class="ai-back" href="#ai">← AI</a>
+        <header class="subpage-head">
+          <h1 class="subpage-title" id="leanland-head">Lean Lab</h1>
+          <p class="subpage-meta">Leanland · Art Installation and Party · 2023</p>
+        </header>
+        <section class="subpage-section subpage-section-prose" aria-label="Project overview">
+          <div class="subpage-prose">
+            <p>The third installment in a series of parties based on a (now dated) <a href="https://knowyourmeme.com/memes/i-love-lean" target="_blank" rel="noopener">internet meme</a>, Lean Lab was a mixed-media installation and party themed as a mock high-fantasy history museum. We used Midjourney image generation across the project, from concept art all the way to finished mounted materials.</p>
+          </div>
+        </section>
+        <nav class="lean-index" aria-label="Lean Lab sections"><button type="button" data-lean-jump="lean-concept">Concept Art</button><button type="button" data-lean-jump="lean-sipstein">The Sipstein Collection</button><button type="button" data-lean-jump="lean-stations">Stations of the Wock</button><button type="button" data-lean-jump="lean-letters">Primary Source Letters</button><button type="button" data-lean-jump="lean-merch">Merchandise</button><button type="button" data-lean-jump="lean-printouts">Printouts</button></nav><section class="subpage-section subpage-section-wide lean-section" tabindex="-1" id="lean-concept" aria-labelledby="lean-concept-head"><h2 class="subpage-section-head" id="lean-concept-head">Concept Art</h2><div class="subpage-prose"><p>Early visual development for Lean Lab, from the laboratory and surrounding world to the artwork that framed its printed materials.</p></div><div class="stills-grid lean-lab-gallery lean-studies">
+<figure><a href="assets/lean-lab/lab-concept.jpg" data-lean-enlarge aria-label="Enlarge Laboratory concept"><img src="assets/lean-lab/lab-concept.jpg" width="1400" height="1400" alt="Laboratory concept" loading="lazy"></a><figcaption>Laboratory concept<small>Midjourney concept for the Lean Lab setting</small></figcaption></figure>
+<figure class="lean-panorama"><a href="assets/lean-lab/concept-1.jpg" data-lean-enlarge aria-label="Enlarge Castle panorama"><img src="assets/lean-lab/concept-1-thumb.jpg" width="480" height="196" alt="Castle panorama" loading="lazy"></a><figcaption>Castle panorama</figcaption></figure>
+<figure><a href="assets/lean-lab/concept-2.jpg" data-lean-enlarge aria-label="Enlarge Lean Lab Vol. II: Exodus"><img src="assets/lean-lab/concept-2-thumb.jpg" width="480" height="480" alt="Lean Lab Vol. II: Exodus" loading="lazy"></a><figcaption>Lean Lab Vol. II: Exodus<small>Title and cover art</small></figcaption></figure>
+<figure class="lean-square"><a href="assets/lean-lab/concept-3.jpg" data-lean-enlarge aria-label="Enlarge Town panorama I"><img src="assets/lean-lab/concept-3-thumb.jpg" width="480" height="80" alt="Town panorama I" loading="lazy"></a><figcaption>Town panorama I</figcaption></figure>
+<figure class="lean-square"><a href="assets/lean-lab/concept-4.jpg" data-lean-enlarge aria-label="Enlarge Town panorama II"><img src="assets/lean-lab/concept-4-thumb.jpg" width="480" height="80" alt="Town panorama II" loading="lazy"></a><figcaption>Town panorama II</figcaption></figure>
+<figure class="lean-square"><a href="assets/lean-lab/concept-5.jpg" data-lean-enlarge aria-label="Enlarge Town panorama III"><img src="assets/lean-lab/concept-5-thumb.jpg" width="480" height="80" alt="Town panorama III" loading="lazy"></a><figcaption>Town panorama III</figcaption></figure>
+<figure><a href="assets/lean-lab/concept-6.jpg" data-lean-enlarge aria-label="Enlarge Alchemist study I"><img src="assets/lean-lab/concept-6-thumb.jpg" width="80" height="480" alt="Alchemist study I" loading="lazy"></a><figcaption>Alchemist study I</figcaption></figure>
+<figure><a href="assets/lean-lab/concept-7.jpg" data-lean-enlarge aria-label="Enlarge Alchemist study II"><img src="assets/lean-lab/concept-7-thumb.jpg" width="80" height="480" alt="Alchemist study II" loading="lazy"></a><figcaption>Alchemist study II<small>Also used for the shirt artwork</small></figcaption></figure>
+<figure class="lean-square"><a href="assets/lean-lab/concept-8.jpg" data-lean-enlarge aria-label="Enlarge Correspondence banner: top"><img src="assets/lean-lab/concept-8-thumb.jpg" width="480" height="60" alt="Correspondence banner: top" loading="lazy"></a><figcaption>Correspondence banner: top</figcaption></figure>
+<figure class="lean-square"><a href="assets/lean-lab/concept-9.jpg" data-lean-enlarge aria-label="Enlarge Correspondence banner: bottom"><img src="assets/lean-lab/concept-9-thumb.jpg" width="480" height="60" alt="Correspondence banner: bottom" loading="lazy"></a><figcaption>Correspondence banner: bottom</figcaption></figure>
+<figure><a href="assets/lean-lab/lab-variation-1.jpg" data-lean-enlarge aria-label="Enlarge Laboratory variation 1"><img src="assets/lean-lab/lab-variation-1-thumb.jpg" width="480" height="480" alt="Laboratory variation 1" loading="lazy"></a><figcaption>Laboratory variation 1</figcaption></figure>
+<figure><a href="assets/lean-lab/lab-variation-2.jpg" data-lean-enlarge aria-label="Enlarge Laboratory variation 2"><img src="assets/lean-lab/lab-variation-2-thumb.jpg" width="480" height="480" alt="Laboratory variation 2" loading="lazy"></a><figcaption>Laboratory variation 2</figcaption></figure>
+<figure class="lean-panorama"><a href="assets/lean-lab/fantasy-study-1.jpg" data-lean-enlarge aria-label="Enlarge Dark fantasy study 1"><img src="assets/lean-lab/fantasy-study-1-thumb.jpg" width="480" height="161" alt="Dark fantasy study 1" loading="lazy"></a><figcaption>Dark fantasy study 1</figcaption></figure>
+<figure class="lean-panorama"><a href="assets/lean-lab/fantasy-study-2.jpg" data-lean-enlarge aria-label="Enlarge Dark fantasy study 2"><img src="assets/lean-lab/fantasy-study-2-thumb.jpg" width="480" height="161" alt="Dark fantasy study 2" loading="lazy"></a><figcaption>Dark fantasy study 2</figcaption></figure>
+<figure class="lean-panorama"><a href="assets/lean-lab/fantasy-study-3.jpg" data-lean-enlarge aria-label="Enlarge Dark fantasy study 3"><img src="assets/lean-lab/fantasy-study-3-thumb.jpg" width="480" height="161" alt="Dark fantasy study 3" loading="lazy"></a><figcaption>Dark fantasy study 3</figcaption></figure>
+<figure class="lean-panorama"><a href="assets/lean-lab/fantasy-study-4.jpg" data-lean-enlarge aria-label="Enlarge Dark fantasy study 4"><img src="assets/lean-lab/fantasy-study-4-thumb.jpg" width="480" height="161" alt="Dark fantasy study 4" loading="lazy"></a><figcaption>Dark fantasy study 4</figcaption></figure>
+<figure class="lean-panorama"><a href="assets/lean-lab/fantasy-study-5.jpg" data-lean-enlarge aria-label="Enlarge Dark fantasy study 5"><img src="assets/lean-lab/fantasy-study-5-thumb.jpg" width="480" height="161" alt="Dark fantasy study 5" loading="lazy"></a><figcaption>Dark fantasy study 5</figcaption></figure>
+<figure><a href="assets/lean-lab/fantasy-study-6.jpg" data-lean-enlarge aria-label="Enlarge Dark fantasy study 6"><img src="assets/lean-lab/fantasy-study-6-thumb.jpg" width="269" height="480" alt="Dark fantasy study 6" loading="lazy"></a><figcaption>Dark fantasy study 6</figcaption></figure>
+<figure><a href="assets/lean-lab/fantasy-study-7.jpg" data-lean-enlarge aria-label="Enlarge Dark fantasy study 7"><img src="assets/lean-lab/fantasy-study-7-thumb.jpg" width="240" height="480" alt="Dark fantasy study 7" loading="lazy"></a><figcaption>Dark fantasy study 7</figcaption></figure>
+<figure><a href="assets/lean-lab/fantasy-study-8.jpg" data-lean-enlarge aria-label="Enlarge Dark fantasy study 8"><img src="assets/lean-lab/fantasy-study-8-thumb.jpg" width="269" height="480" alt="Dark fantasy study 8" loading="lazy"></a><figcaption>Dark fantasy study 8</figcaption></figure>
+</div></section><section class="subpage-section subpage-section-wide lean-section" tabindex="-1" id="lean-sipstein" aria-labelledby="lean-sipstein-head"><h2 class="subpage-section-head" id="lean-sipstein-head">The Sipstein Collection</h2><div class="subpage-prose"><p>An in-world art gallery that recast familiar paintings as artifacts from the fictional collection of Wocktavius Sipstein. These four works are AI-assisted; titles come from the original exhibition plaques.</p></div><div class="lean-carousel-actions"><button type="button" data-lean-sipstein-step="-1" aria-controls="lean-sipstein-track">← Previous artwork</button><button type="button" data-lean-sipstein-step="1" aria-controls="lean-sipstein-track">Next artwork →</button></div><div class="stills-grid lean-lab-gallery lean-sipstein-carousel" id="lean-sipstein-track" role="region" aria-label="Sipstein artwork carousel" tabindex="0">
+<figure><a href="assets/lean-lab/sipstein-1.jpg" data-lean-enlarge aria-label="Enlarge I loooove Leaan"><img src="assets/lean-lab/sipstein-1-thumb.jpg" alt="I loooove Leaan" loading="lazy"></a><figcaption>I loooove Leaan</figcaption></figure>
+<figure><a href="assets/lean-lab/sipstein-2.jpg" data-lean-enlarge aria-label="Enlarge Girl with a Pearl Earring and also a Cup of Lean"><img src="assets/lean-lab/sipstein-2-thumb.jpg" alt="Girl with a Pearl Earring and also a Cup of Lean" loading="lazy"></a><figcaption>Girl with a Pearl Earring and also a Cup of Lean</figcaption></figure>
+<figure><a href="assets/lean-lab/sipstein-5.jpg" data-lean-enlarge aria-label="Enlarge The Last Drank"><img src="assets/lean-lab/sipstein-5-thumb.jpg" alt="The Last Drank" loading="lazy"></a><figcaption>The Last Drank</figcaption></figure>
+<figure><a href="assets/lean-lab/sipstein-7.jpg" data-lean-enlarge aria-label="Enlarge The Old Guitarist on Lunch Break"><img src="assets/lean-lab/sipstein-7-thumb.jpg" alt="The Old Guitarist on Lunch Break" loading="lazy"></a><figcaption>The Old Guitarist on Lunch Break</figcaption></figure>
+</div></section><section class="subpage-section subpage-section-wide lean-section" tabindex="-1" id="lean-stations" aria-labelledby="lean-stations-head"><h2 class="subpage-section-head" id="lean-stations-head">Stations of the Wock</h2><div class="subpage-prose"><p>Stations of the Wock reimagines the Stations of the Cross as a parable from Lean Lab’s fictional world. The images were printed and displayed in sequence with labels beside them. Select any station to enlarge it.</p></div><div class="stills-grid lean-lab-gallery lean-mosaic"><figure><a href="assets/lean-lab/station-1.jpg" data-lean-enlarge aria-label="Enlarge Station 1"><img src="assets/lean-lab/station-1-thumb.jpg" alt="Station 1" loading="lazy"></a><figcaption>Station 1</figcaption></figure>
+<figure><a href="assets/lean-lab/station-2.jpg" data-lean-enlarge aria-label="Enlarge Station 2"><img src="assets/lean-lab/station-2-thumb.jpg" alt="Station 2" loading="lazy"></a><figcaption>Station 2</figcaption></figure>
+<figure><a href="assets/lean-lab/station-3.jpg" data-lean-enlarge aria-label="Enlarge Station 3"><img src="assets/lean-lab/station-3-thumb.jpg" alt="Station 3" loading="lazy"></a><figcaption>Station 3</figcaption></figure>
+<figure><a href="assets/lean-lab/station-4.jpg" data-lean-enlarge aria-label="Enlarge Station 4"><img src="assets/lean-lab/station-4-thumb.jpg" alt="Station 4" loading="lazy"></a><figcaption>Station 4</figcaption></figure>
+<figure><a href="assets/lean-lab/station-5.jpg" data-lean-enlarge aria-label="Enlarge Station 5"><img src="assets/lean-lab/station-5-thumb.jpg" alt="Station 5" loading="lazy"></a><figcaption>Station 5</figcaption></figure>
+<figure><a href="assets/lean-lab/station-6.jpg" data-lean-enlarge aria-label="Enlarge Station 6"><img src="assets/lean-lab/station-6-thumb.jpg" alt="Station 6" loading="lazy"></a><figcaption>Station 6</figcaption></figure>
+<figure><a href="assets/lean-lab/station-7.jpg" data-lean-enlarge aria-label="Enlarge Station 7"><img src="assets/lean-lab/station-7-thumb.jpg" alt="Station 7" loading="lazy"></a><figcaption>Station 7</figcaption></figure>
+<figure><a href="assets/lean-lab/station-8.jpg" data-lean-enlarge aria-label="Enlarge Station 8"><img src="assets/lean-lab/station-8-thumb.jpg" alt="Station 8" loading="lazy"></a><figcaption>Station 8</figcaption></figure>
+<figure><a href="assets/lean-lab/station-9.jpg" data-lean-enlarge aria-label="Enlarge Station 9"><img src="assets/lean-lab/station-9-thumb.jpg" alt="Station 9" loading="lazy"></a><figcaption>Station 9</figcaption></figure>
+<figure><a href="assets/lean-lab/station-10.jpg" data-lean-enlarge aria-label="Enlarge Station 10"><img src="assets/lean-lab/station-10-thumb.jpg" alt="Station 10" loading="lazy"></a><figcaption>Station 10</figcaption></figure>
+<figure><a href="assets/lean-lab/station-11.jpg" data-lean-enlarge aria-label="Enlarge Station 11"><img src="assets/lean-lab/station-11-thumb.jpg" alt="Station 11" loading="lazy"></a><figcaption>Station 11</figcaption></figure>
+<figure><a href="assets/lean-lab/station-12.jpg" data-lean-enlarge aria-label="Enlarge Station 12"><img src="assets/lean-lab/station-12-thumb.jpg" alt="Station 12" loading="lazy"></a><figcaption>Station 12</figcaption></figure>
+<figure><a href="assets/lean-lab/station-13.jpg" data-lean-enlarge aria-label="Enlarge Station 13"><img src="assets/lean-lab/station-13-thumb.jpg" alt="Station 13" loading="lazy"></a><figcaption>Station 13</figcaption></figure>
+<figure><a href="assets/lean-lab/station-14.jpg" data-lean-enlarge aria-label="Enlarge Station 14"><img src="assets/lean-lab/station-14-thumb.jpg" alt="Station 14" loading="lazy"></a><figcaption>Station 14</figcaption></figure>
+<figure><a href="assets/lean-lab/station-15.jpg" data-lean-enlarge aria-label="Enlarge Station 15"><img src="assets/lean-lab/station-15-thumb.jpg" alt="Station 15" loading="lazy"></a><figcaption>Station 15</figcaption></figure></div></section><section class="subpage-section subpage-section-wide lean-section" tabindex="-1" id="lean-letters" aria-labelledby="lean-letters-head"><h2 class="subpage-section-head" id="lean-letters-head">Primary Source Letters</h2><div class="subpage-prose"><p>Fictional records from the Lean Lab exhibition, in the order of its letter plaques. The crests and illustrations were made with Midjourney, and AI was also used to refine the diction of the letters.</p></div><div class="lean-carousel-actions"><button type="button" data-lean-letter-step="-1" aria-controls="lean-letter-track">← Previous letter</button><button type="button" data-lean-letter-step="1" aria-controls="lean-letter-track">Next letter →</button></div><div class="lean-carousel lean-lab-gallery" id="lean-letter-track" role="region" aria-label="Primary source letters" tabindex="0"><figure class="lean-letter"><a href="assets/lean-lab/letter-pages/letter-01.jpg" data-lean-enlarge aria-label="Enlarge The first sobriety experiment"><img src="assets/lean-lab/letter-pages/letter-01.jpg" alt="The first sobriety experiment" loading="lazy"></a><figcaption>The first sobriety experiment</figcaption></figure>
+<figure class="lean-letter"><a href="assets/lean-lab/letter-pages/letter-02.jpg" data-lean-enlarge aria-label="Enlarge A student writes to the Leancademy"><img src="assets/lean-lab/letter-pages/letter-02.jpg" alt="A student writes to the Leancademy" loading="lazy"></a><figcaption>A student writes to the Leancademy</figcaption></figure>
+<figure class="lean-letter"><a href="assets/lean-lab/letter-pages/letter-03.jpg" data-lean-enlarge aria-label="Enlarge Cease and desist order"><img src="assets/lean-lab/letter-pages/letter-03.jpg" alt="Cease and desist order" loading="lazy"></a><figcaption>Cease and desist order</figcaption></figure>
+<figure class="lean-letter"><a href="assets/lean-lab/letter-pages/letter-04.png" data-lean-enlarge aria-label="Enlarge Clandestine letter"><img src="assets/lean-lab/letter-pages/letter-04.png" alt="Clandestine letter" loading="lazy"></a><figcaption>Clandestine letter</figcaption></figure>
+<figure class="lean-letter"><a href="assets/lean-lab/letter-pages/letter-05.jpg" data-lean-enlarge aria-label="Enlarge Operation Silly Sprite"><img src="assets/lean-lab/letter-pages/letter-05.jpg" alt="Operation Silly Sprite" loading="lazy"></a><figcaption>Operation Silly Sprite</figcaption></figure>
+<figure class="lean-letter"><a href="assets/lean-lab/letter-pages/letter-06.jpg" data-lean-enlarge aria-label="Enlarge Royal decree announcing Wocktor treachery"><img src="assets/lean-lab/letter-pages/letter-06.jpg" alt="Royal decree announcing Wocktor treachery" loading="lazy"></a><figcaption>Royal decree announcing Wocktor treachery</figcaption></figure>
+<figure class="lean-letter"><a href="assets/lean-lab/letter-pages/letter-08.jpg" data-lean-enlarge aria-label="Enlarge Thirty years later"><img src="assets/lean-lab/letter-pages/letter-08.jpg" alt="Thirty years later" loading="lazy"></a><figcaption>Thirty years later</figcaption></figure>
+<figure class="lean-letter"><a href="assets/lean-lab/letter-pages/letter-09.jpg" data-lean-enlarge aria-label="Enlarge Royal decree dismissing Lean Lab rumors"><img src="assets/lean-lab/letter-pages/letter-09.jpg" alt="Royal decree dismissing Lean Lab rumors" loading="lazy"></a><figcaption>Royal decree dismissing Lean Lab rumors</figcaption></figure></div></section><section class="subpage-section subpage-section-wide lean-section" tabindex="-1" id="lean-merch" aria-labelledby="lean-merch-head"><h2 class="subpage-section-head" id="lean-merch-head">Merchandise</h2><div class="subpage-prose"><p>Merchandise mockups and graphics from the original event.</p></div><div class="stills-grid lean-lab-gallery ">
+<figure><a href="assets/lean-lab/merch-1.jpg" data-lean-enlarge aria-label="Enlarge Shirt mockup"><img src="assets/lean-lab/merch-1-thumb.jpg" alt="Shirt mockup" loading="lazy"></a><figcaption>Shirt mockup<small>Front and back, featuring Midjourney artwork</small></figcaption></figure>
+<figure><a href="assets/lean-lab/merch-2.jpg" data-lean-enlarge aria-label="Enlarge Hat mockup"><img src="assets/lean-lab/merch-2-thumb.jpg" alt="Hat mockup" loading="lazy"></a><figcaption>Hat mockup</figcaption></figure>
+<figure><a href="assets/lean-lab/merch-4.jpg" data-lean-enlarge aria-label="Enlarge Exquisite Garb display"><img src="assets/lean-lab/merch-4-thumb.jpg" alt="Exquisite Garb display" loading="lazy"></a><figcaption>Exquisite Garb display<small>Event signage</small></figcaption></figure>
+</div></section><section class="subpage-section subpage-section-wide lean-section" tabindex="-1" id="lean-printouts" aria-labelledby="lean-printouts-head"><h2 class="subpage-section-head" id="lean-printouts-head">Printouts</h2><div class="subpage-prose"><p>Menus, order sheets, and signs show how the artwork carried through to the event’s printed materials.</p></div><div class="stills-grid lean-lab-gallery lean-printouts">
+<figure><a href="assets/lean-lab/printout-1.jpg" data-lean-enlarge aria-label="Enlarge Crêpe menu"><img src="assets/lean-lab/printout-1-thumb.jpg" alt="Crêpe menu" loading="lazy"></a><figcaption>Crêpe menu<small>Event printout</small></figcaption></figure>
+<figure><a href="assets/lean-lab/printout-2.jpg" data-lean-enlarge aria-label="Enlarge Order sheet I"><img src="assets/lean-lab/printout-2-thumb.jpg" alt="Order sheet I" loading="lazy"></a><figcaption>Order sheet I<small>Blank form, orders 1–24</small></figcaption></figure>
+<figure><a href="assets/lean-lab/printout-4.jpg" data-lean-enlarge aria-label="Enlarge Payment QR sign"><img src="assets/lean-lab/printout-4-thumb.jpg" alt="Payment QR sign" loading="lazy"></a><figcaption>Payment QR sign<small>Original event printout</small></figcaption></figure>
+<figure><a href="assets/lean-lab/printout-5.jpg" data-lean-enlarge aria-label="Enlarge Donation QR sign"><img src="assets/lean-lab/printout-5-thumb.jpg" alt="Donation QR sign" loading="lazy"></a><figcaption>Donation QR sign<small>Original event printout</small></figcaption></figure>
+</div></section>
       </section>
 
       <!-- SUMMER OF NOTHING SUBPAGE -->
@@ -1594,6 +2188,26 @@
           <h2 class="subpage-section-head" id="recursion-about">About the Project</h2>
           <div class="subpage-prose">
             <p><em>Recursion</em> is a slow-burn psychological horror project currently being developed as a feature screenplay. The film above is a 13-minute AI-generated short made as a proof of concept for that larger story. Every image and voice was generated with AI, with sound and music produced using generative tools; the script and writing were not AI-generated.</p>
+          </div>
+        </section>
+
+        <section class="subpage-section subpage-section-wide" aria-labelledby="recursion-film-stills">
+          <h2 class="subpage-section-head" id="recursion-film-stills">Film Stills</h2>
+          <div class="stills-grid stills-film" id="recursion-film-gallery">
+            <a class="still" href="assets/recursion/film-stills/still-01.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-01.jpg" width="1280" height="720" alt="Recursion film still 1" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/still-02.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-02.jpg" width="1280" height="720" alt="Recursion film still 2" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/still-03.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-03.jpg" width="1280" height="720" alt="Recursion film still 3" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/still-04.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-04.jpg" width="1280" height="720" alt="Recursion film still 4" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/still-05.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-05.jpg" width="1280" height="720" alt="Recursion film still 5" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/still-06.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-06.jpg" width="1280" height="720" alt="Recursion film still 6" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/still-07.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-07.jpg" width="1280" height="720" alt="Recursion film still 7" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/still-08.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-08.jpg" width="1280" height="720" alt="Recursion film still 8" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/still-09.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-09.jpg" width="1280" height="720" alt="Recursion film still 9" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/still-10.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-10.jpg" width="1280" height="720" alt="Recursion film still 10" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/still-11.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-11.jpg" width="1280" height="720" alt="Recursion film still 11" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/press-hallway.jpg" data-film-enlarge><img src="assets/recursion/film-stills/press-hallway.jpg" width="1280" height="720" alt="Reporters crowd behind yellow police tape in the accelerator lab hallway" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/still-13.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-13.jpg" width="1280" height="720" alt="Recursion film still 13" loading="lazy" decoding="async"></a>
+            <a class="still" href="assets/recursion/film-stills/still-14.jpg" data-film-enlarge><img src="assets/recursion/film-stills/still-14.jpg" width="1280" height="720" alt="Recursion film still 14" loading="lazy" decoding="async"></a>
           </div>
         </section>
 
@@ -1748,10 +2362,37 @@
   </div>
 
   <script>
+    // Lean Lab section jumps and letter carousel.
+    (() => {
+      const exhibit = document.getElementById('view-leanland');
+      const motion = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
+      exhibit?.addEventListener('click', event => {
+        const jump = event.target.closest('[data-lean-jump]');
+        if (jump) {
+          const target = document.getElementById(jump.dataset.leanJump);
+          target?.focus({preventScroll: true});
+          target?.scrollIntoView({behavior: motion(), block: 'start'});
+          return;
+        }
+        const step = event.target.closest('[data-lean-letter-step], [data-lean-sipstein-step]');
+        if (step) {
+          const track = document.getElementById(step.getAttribute('aria-controls'));
+          if (!track?.firstElementChild) return;
+          const pitch = track.firstElementChild.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap);
+          const direction = Number(step.dataset.leanLetterStep ?? step.dataset.leanSipsteinStep);
+          track.scrollBy({left: direction * pitch, behavior: motion()});
+        }
+      });
+    })();
+
     // Lightweight view router — sidebar persists, content swaps in place.
     const views = {
       work:                document.getElementById('view-work'),
       writing:             document.getElementById('view-writing'),
+      ai:                  document.getElementById('view-ai'),
+      'marble-lake':       document.getElementById('view-marble-lake'),
+      'olaf-the-lunatic':  document.getElementById('view-olaf-the-lunatic'),
+      leanland:            document.getElementById('view-leanland'),
       about:               document.getElementById('view-about'),
       envoys:              document.getElementById('view-envoys'),
       'recursion': document.getElementById('view-recursion'),
@@ -1764,6 +2405,7 @@
     // Subpage view id -> sidebar project slug to highlight.
     // (Subpage id == project slug here, but explicit map is clearer.)
     const subpageProject = {
+      'olaf-the-lunatic': 'olaf-the-lunatic',
       'envoys':              'envoys',
       'recursion':   'recursion',
       'reefbreaker-bay':     'reefbreaker-bay',
@@ -1771,6 +2413,9 @@
     };
     // Subpage view id -> which top-level category should look active.
     const subpageCategory = {
+      'olaf-the-lunatic': 'work',
+      leanland: 'ai',
+      'marble-lake': 'ai',
       'envoys':              'work',
       'recursion':   'work',
       'reefbreaker-bay':     'work',
@@ -1789,6 +2434,9 @@
     // tiles (which live one level deep inside .grid). Subpages cascade their
     // direct children.
     function getCascadeTargets(viewEl) {
+      if (viewEl.id === 'view-ai') {
+        return Array.from(viewEl.querySelectorAll('.subpage-head, .ai-intro, .ai-entry'));
+      }
       const grid = viewEl.querySelector(':scope > .grid');
       if (grid) {
         const targets = [];
@@ -1824,6 +2472,7 @@
       const categoryForView =
         (name === 'about')        ? 'about' :
         (name === 'writing')      ? 'writing' :
+        (name === 'ai')           ? 'ai' :
         (subpageCategory[name])   ? subpageCategory[name] :
                                     'work';
       catButtons.forEach(b => b.classList.toggle('is-active', b.dataset.view === categoryForView));
@@ -1842,10 +2491,25 @@
       window.scrollTo({ top: 0 });
     }
 
+    function showEnvoysAIUse() {
+      setView('envoys');
+      requestAnimationFrame(() => {
+        if (location.hash !== '#envoys-ai-use') return;
+        const target = document.getElementById('envoys-ai-use');
+        target.focus({ preventScroll: true });
+        target.scrollIntoView({ block: 'start' });
+      });
+    }
+
     catButtons.forEach(b => {
       b.addEventListener('click', e => {
         e.preventDefault();
         const v = b.dataset.view;
+        if (v === 'ai' || currentView === 'ai' || currentView === 'marble-lake') {
+          if (location.hash !== '#' + v) history.pushState(null, '', '#' + v);
+          setView(v);
+          return;
+        }
         setView(v);
         history.replaceState(null, '', '#' + v);
       });
@@ -1871,6 +2535,7 @@
     // Project clicks. External links (writing placeholders) pass through to
     // their native behavior; internal projects route to their subpage.
     const projectSubpages = {
+      'olaf-the-lunatic': 'olaf-the-lunatic',
       'envoys':              'envoys',
       'recursion':   'recursion',
       'reefbreaker-bay':     'reefbreaker-bay',
@@ -1905,6 +2570,16 @@
         e.preventDefault();
         const href = t.getAttribute('href') || '';
         const slug = href.replace('#', '');
+        if (slug === 'envoys-ai-use') {
+          if (location.hash !== href) history.pushState(null, '', href);
+          showEnvoysAIUse();
+          return;
+        }
+        if (t.closest('#view-ai') && Object.hasOwn(views, slug)) {
+          if (location.hash !== '#' + slug) history.pushState(null, '', '#' + slug);
+          setView(slug);
+          return;
+        }
         const match = document.querySelector('.nav-sub a[data-project="' + slug + '"]');
         if (match) match.click();
       });
@@ -2012,7 +2687,8 @@
       if (h) {
         // Deep link — skip the curtain, reveal the site directly.
         if (curtain) curtain.style.display = 'none';
-        if (views[h]) setView(h);
+        if (h === 'envoys-ai-use') showEnvoysAIUse();
+        else if (views[h]) setView(h);
         else {
           const match = document.querySelector('.nav-sub a[data-project="' + h + '"]');
           if (match) match.click();
@@ -2023,6 +2699,11 @@
         setView('work');
       }
     })();
+    window.addEventListener('hashchange', () => {
+      const h = location.hash.slice(1) || 'work';
+      if (h === 'envoys-ai-use') showEnvoysAIUse();
+      else if (Object.hasOwn(views, h)) setView(h);
+    });
     // ---- Curtain gaze: man & horse heads follow the cursor (desktop only) ----
     // Each figure has 8 poses: 2 facings x 4 vertical tilts. As the cursor moves,
     // each figure independently picks the single pose that best aims its gaze at
@@ -2128,6 +2809,7 @@
       if (!box) return;
       var bImg = box.querySelector('img');
       var clearTimer = null;
+      var photoSource = null, request = 0;
       function sizeImg(){
         var nw = bImg.naturalWidth, nh = bImg.naturalHeight;
         if (!nw || !nh) return;
@@ -2148,13 +2830,34 @@
         document.body.style.overflow = 'hidden';
       }
       function closeBox(){
+        ++request;
         box.classList.remove('open');
         box.setAttribute('aria-hidden', 'true');
+        if (photoSource) { photoSource.focus({preventScroll: true}); photoSource = null; }
         document.body.style.overflow = '';
         clearTimer = setTimeout(function(){ bImg.src = ''; bImg.style.width = ''; bImg.style.height = ''; }, 340);
       }
       document.addEventListener('click', function(e){
-        var img = e.target.closest && e.target.closest('.still img');
+        const lean = e.target.closest?.('[data-lean-enlarge], [data-film-enlarge]');
+        if (lean) {
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+          e.preventDefault();
+          const token = ++request;
+          const thumb = lean.querySelector('img');
+          const src = lean.href;
+          photoSource = lean;
+          openBox(thumb.currentSrc || thumb.src, thumb.alt);
+          box.focus({preventScroll: true});
+          const full = new Image();
+          full.onload = () => {
+            if (token !== request || !box.classList.contains('open')) return;
+            bImg.src = src;
+            sizeImg();
+          };
+          full.src = src;
+          return;
+        }
+        const img = e.target.closest?.('.still img');
         if (img) { e.preventDefault(); openBox(img.currentSrc || img.src, img.alt); }
       });
       box.addEventListener('click', function(e){
@@ -2172,7 +2875,57 @@
     })();
 
   </script>
-  <div id="lightbox" aria-hidden="true"><img src="" alt=""></div>
+  <dialog class="envoys-reader" id="envoys-reader" aria-labelledby="envoys-reader-title">
+    <header class="envoys-reader-bar">
+      <h2 class="envoys-reader-title" id="envoys-reader-title"></h2>
+      <form method="dialog"><button class="envoys-reader-close" type="submit" autofocus>Close</button></form>
+    </header>
+    <div class="envoys-reader-pages" role="region" aria-label="Lookbook pages" tabindex="0"></div>
+  </dialog>
+  <script>
+    (() => {
+      const reader = document.getElementById('envoys-reader');
+      if (!reader?.showModal) return;
+      const pages = reader.querySelector('.envoys-reader-pages');
+      const title = reader.querySelector('#envoys-reader-title');
+      let opener, previousOverflow;
+      document.querySelector('.envoys-lookbooks')?.addEventListener('click', e => {
+        const link = e.target.closest('[data-lookbook-page]');
+        if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        opener = link;
+        const book = link.closest('[data-lookbook]');
+        const links = Array.from(book.querySelectorAll('[data-lookbook-page]'));
+        const selected = links.indexOf(link);
+        title.textContent = book.querySelector('h3').firstChild.textContent.trim();
+        pages.replaceChildren(...links.map((page, i) => {
+          const frame = document.createElement('figure');
+          const image = document.createElement('img');
+          const thumb = page.querySelector('img');
+          image.alt = thumb.alt;
+          image.width = Number(thumb.getAttribute('width')) || 1600;
+          image.height = Number(thumb.getAttribute('height')) || 900;
+          image.loading = i === selected ? 'eager' : 'lazy';
+          image.decoding = 'async';
+          image.src = page.href;
+          frame.appendChild(image);
+          return frame;
+        }));
+        previousOverflow = document.body.style.overflow;
+        reader.showModal();
+        document.body.style.overflow = 'hidden';
+        pages.focus({preventScroll:true});
+        pages.children[selected].scrollIntoView({block:'start'});
+      });
+      reader.addEventListener('close', () => {
+        document.body.style.overflow = previousOverflow;
+        pages.replaceChildren();
+        opener?.focus({preventScroll:true});
+        opener = null;
+      });
+    })();
+  </script>
+  <div id="lightbox" aria-hidden="true" tabindex="-1" aria-label="Enlarged image"><img src="" alt=""></div>
   <script>
     // Route in-text About links through the existing nav router.
     document.querySelectorAll('.about-link').forEach(function (a) {
